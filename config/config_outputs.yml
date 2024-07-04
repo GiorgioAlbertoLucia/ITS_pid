@@ -1,0 +1,320 @@
+#
+# Output configuration file
+#
+
+# output file path
+#outputFilePath: "/home/galucia/antiLithium4/analysis/output/data.root"
+#studiesOutputFilePath: "/home/galucia/antiLithium4/analysis/output/data_studies.root"
+outDirs: ["all", "Pi", "K", "P"]
+
+clSizeL0: {  name: "clSizeL0",
+            title: "Cl. size layer 0; Cl. size layer 0; Counts",
+            xVariable: "clSizeL0",
+            nXBins: 25,
+            xMin: 0,
+            xMax: 25,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+clSizeL1: {  name: "clSizeL1",
+            title: "Cl. size layer 1; Cl. size layer 1; Counts",
+            xVariable: "clSizeL1",
+            nXBins: 25,
+            xMin: 0,
+            xMax: 25,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+clSizeL2: {  name: "clSizeL0",
+            title: "Cl. size layer 2; Cl. size layer 2; Counts",
+            xVariable: "clSizeL2",
+            nXBins: 25,
+            xMin: 0,
+            xMax: 25,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+clSizeL3: {  name: "clSizeL3",
+            title: "Cl. size layer 3; Cl. size layer 3; Counts",
+            xVariable: "clSizeL3",
+            nXBins: 25,
+            xMin: 0,
+            xMax: 25,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+clSizeL4: {  name: "clSizeL4",
+            title: "Cl. size layer 4; Cl. size layer 4; Counts",
+            xVariable: "clSizeL4",
+            nXBins: 25,
+            xMin: 0,
+            xMax: 25,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+clSizeL5: {  name: "clSizeL5",
+            title: "Cl. size layer 5; Cl. size layer 5; Counts",
+            xVariable: "clSizeL5",
+            nXBins: 25,
+            xMin: 0,
+            xMax: 25,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+clSizeL6: {  name: "clSizeL6",
+            title: "Cl. size layer 6; Cl. size layer 6; Counts",
+            xVariable: "clSizeL6",
+            nXBins: 25,
+            xMin: 0,
+            xMax: 25,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+meanClSize: {  name: "meanClSize",
+            title: "#LT Cl. size #GT; #LT Cl. size #GT; Counts",
+            xVariable: "meanClSize",
+            nXBins: 50,
+            xMin: 0,
+            xMax: 25,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+meanClSizeCosLamda: {  name: "meanClSizeCosLamda",
+            title: "#LT Cl. size #GT #times #LT cos #lamda #GT; #LT Cl. size #GT #times #LT cos #lamda #GT; Counts",
+            xVariable: "clSizeCosL",
+            nXBins: 250,
+            xMin: 0,
+            xMax: 25,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+p:        {  name: "p",
+            title: "#it{p} ; #it{p} (GeV/#it{c}); Counts",
+            xVariable: "p",
+            nXBins: 1000,
+            xMin: 0,
+            xMax: 1,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+pt:       {  name: "pt",
+            title: "#it{p}_{T} ; #it{p}_{T} (GeV/#it{c}); Counts",
+            xVariable: "pt",
+            nXBins: 1000,
+            xMin: 0,
+            xMax: 1,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            } 
+
+phi:      {  name: "phi",
+            title: "#phi ; #phi; Counts",
+            xVariable: "phi",
+            nXBins: 100,
+            xMin: 0,
+            xMax: 6.283185307179586,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+eta:      {  name: "eta",
+            title: "#eta ; #eta; Counts",
+            xVariable: "eta",
+            nXBins: 300,
+            xMin: -3,
+            xMax: 3,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+tgL:      {  name: "tgL",
+            title: "#LT tan#lambda #GT; #LT tan#lambda #GT; Counts",
+            xVariable: "tgL",
+            nXBins: 80,
+            xMin: -4,
+            xMax: 4,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+dEdx:     {  name: "dEdx",
+            title: "Specific energy loss; dE/dx; Counts",
+            xVariable: "dEdx",
+            nXBins: 600,
+            xMin: 0,
+            xMax: 600,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+nSigmaAbsE: {  name: "nSigmaAbsE",
+            title: "|n#sigma_{e}| ; |n#sigma_{e}|; Counts",
+            xVariable: "nSigmaAbsE",
+            nXBins: 100,
+            xMin: 0,
+            xMax: 10,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+nSigmaAbsPi: {  name: "nSigmaAbsPi",
+            title: "|n#sigma_{#pi}| ; |n#sigma_{#pi}|; Counts",
+            xVariable: "nSigmaAbsPi",
+            nXBins: 100,
+            xMin: 0,
+            xMax: 10,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+nSigmaAbsK: {  name: "nSigmaAbsK",
+            title: "|n#sigma_{K}| ; |n#sigma_{K}|; Counts",
+            xVariable: "nSigmaAbsK",
+            nXBins: 100,
+            xMin: 0,
+            xMax: 10,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+nSigmaAbsP: {  name: "nSigmaAbsP",
+            title: "|n#sigma_{p}| ; |n#sigma_{p}|; Counts",
+            xVariable: "nSigmaAbsP",
+            nXBins: 100,
+            xMin: 0,
+            xMax: 10,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+nSigmaAbsDeu: {  name: "nSigmaAbsDeu",
+            title: "|n#sigma_{d}| ; |n#sigma_{d}|; Counts",
+            xVariable: "nSigmaAbsDeu",
+            nXBins: 100,
+            xMin: 0,
+            xMax: 10,
+            type: "TH1F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+dEdx_vs_p: {  name: "dEdx_vs_p",
+            title: "dE/dx vs #it{p}; #it{p} (GeV/#it{c}); dE/dx; Counts",
+            xVariable: "p",
+            nXBins: 1000,
+            xMin: 0,
+            xMax: 1,
+            yVariable: "dEdx",
+            nYBins: 600,
+            yMin: 0,
+            yMax: 600,
+            type: "TH2F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+meanClSize_vs_p: {  name: "meanClSize_vs_p",
+            title: "<Cl. Size> vs #it{p}; #it{p} (GeV/#it{c}); #LT Cl. size #GT; Counts",
+            xVariable: "p",
+            nXBins: 1000,
+            xMin: 0,
+            xMax: 1,
+            yVariable: "meanClSize",
+            nYBins: 50,
+            yMin: 0,
+            yMax: 25,
+            type: "TH2F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+clSizeCosL_vs_p: {  name: "clSizeCosL_vs_p",
+            title: "#LT Cl. size #GT #times #LT cos #lamda #GT vs #it{p}; #it{p} (GeV/#it{c}); #LT Cl. size #GT #times #LT cos #lamda #GT; Counts",
+            xVariable: "p",
+            nXBins: 1000,
+            xMin: 0,
+            xMax: 1,
+            yVariable: "clSizeCosL",
+            nYBins: 250,
+            yMin: 0,
+            yMax: 25,
+            type: "TH2F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+beta_vs_p: {  name: "beta_vs_p",
+            title: "#beta vs #it{p}; #it{p} (GeV/#it{c}); #beta; Counts",
+            xVariable: "p",
+            nXBins: 1000,
+            xMin: 0,
+            xMax: 1,
+            yVariable: "beta",
+            nYBins: 100,
+            yMin: 0,
+            yMax: 1,
+            type: "TH2F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+dEdx_vs_pTPC: {  name: "dEdx_vs_pTPC",
+            title: "dE/dx vs #it{p}_{TPC}; #it{p}_{TPC} (GeV/#it{c}); dE/dx; Counts",
+            xVariable: "pTPC",
+            nXBins: 1000,
+            xMin: 0,
+            xMax: 1,
+            yVariable: "dEdx",
+            nYBins: 600,
+            yMin: 0,
+            yMax: 600,
+            type: "TH2F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+clSizeCosL_vs_pTPC: {  name: "clSizeCosL_vs_pTPC",
+            title: "#LT Cl. size #GT #times #LT cos #lamda #GT vs #it{p}_{TPC}; #it{p}_{TPC} (GeV/#it{c}); #LT Cl. size #GT #times #LT cos #lamda #GT; Counts",
+            xVariable: "pTPC",
+            nXBins: 1000,
+            xMin: 0,
+            xMax: 1,
+            yVariable: "clSizeCosL",
+            nYBins: 250,
+            yMin: 0,
+            yMax: 25,
+            type: "TH2F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+beta_vs_pTPC: {  name: "beta_vs_pTPC",
+            title: "#beta vs #it{p}_{TPC}; #it{p}_{TPC} (GeV/#it{c}); #beta; Counts",
+            xVariable: "pTPC",
+            nXBins: 1000,
+            xMin: 0,
+            xMax: 1,
+            yVariable: "beta",
+            nYBins: 100,
+            yMin: 0,
+            yMax: 1,
+            type: "TH2F",
+            particle: ["all", "Pi", "K", "P"],
+            }
+
+deltaP_vs_pTPC: {  name: "deltaP_vs_pTPC",
+            title: "#Delta #it{p} vs #it{p}_{TPC}; #it{p}_{TPC} (GeV/#it{c}); #Delta #it{p}; Counts",
+            xVariable: "pTPC",
+            nXBins: 1000,
+            xMin: 0,
+            xMax: 1,
+            yVariable: "deltaP",
+            nYBins: 100,
+            yMin: 0,
+            yMax: 1,
+            type: "TH2F",
+            particle: ["all", "Pi", "K", "P"],
+            }

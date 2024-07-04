@@ -1,0 +1,42 @@
+#
+# Configuration file to load the data for the ITS2 pid study
+#
+
+# enabling configuration
+visualize: False
+
+
+# Particle species
+species: [ #'E',
+          'Pi', 'K', 'P', 
+          #'Deu'
+          ]
+
+# Selections tags 
+# It will be reqruired: 'nSigma{part name}Abs < selfSel and nSigma{part1}Abs > part1Sel  and nSigma{part2}Abs > part2Sel and p <= pmax',
+selTags:  { #E: {selfSel: 2, part1: 'Pi', part1Sel: -1, part2: 'Pi', part2Sel: -1, pmax: 1.},
+            Pi: {selfSel: 2, part1: 'E', part1Sel: 3, part2: 'K', part2Sel: 3, pmax: 1.},
+            K: {selfSel: 2, part1: 'Pi', part1Sel: 3, part2: 'P', part2Sel: 3, pmax: 1.},
+            P: {selfSel: 2, part1: 'K', part1Sel: 3, part2: 'Deu', part2Sel: 3, pmax: 1.},
+            #Deu: {selfSel: 2, part1: 'P', part1Sel: -1, part2: 'P', part2Sel: -1, pmax: 1.}
+          }
+
+cuts:     { nClusTPCmin: 80,
+            chi2ITSTPCmax: 6,
+            etamax: 0.5
+          }
+
+nn_mode: 'classification' # 'classification' or 'regression'
+features: ['clSizeL0', 'clSizeL1', 'clSizeL2', 'clSizeL3', 'clSizeL4', 'clSizeL5', 'clSizeL6', 'eta', 'phi', 'tgL', 'p', 'meanClSize', 'clSizeCosL']
+#features: ['clSizeL0', 'clSizeL1', 'clSizeL2', 'clSizeL3', 'clSizeL4', 'clSizeL5', 'clSizeL6', 'eta', 'phi', 'tgL', 'p']
+target: 'partID'
+oneHot: False
+useClasses: True
+oversample: True
+
+num_epochs: 20
+learning_rate: 0.001
+batch_size: 32
+test_size: 0.2
+
+# data preparation 
