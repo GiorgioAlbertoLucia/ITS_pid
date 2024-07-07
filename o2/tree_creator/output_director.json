@@ -1,0 +1,10 @@
+{ "OutputDirector": {
+    "debug_mode": true,
+    "resfile": "AO2D",
+    "OutputDescriptors": [
+      {
+        "table": "AOD/CLSTV0TABLE/0"
+      }
+    ],
+    "ntfmerge": 1
+  } }
