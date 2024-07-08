@@ -1,6 +1,6 @@
 { "OutputDirector": {
     "debug_mode": true,
-    "resfile": "AO2D",
+    "resfile": "AO2D_V0Table",
     "OutputDescriptors": [
       {
         "table": "AOD/CLSTV0TABLE/0"

@@ -1,7 +1,7 @@
 LOGFILE="output.log"
 CONF="-b --configuration json://configuration.json"
 OUTPUT_DIR="--aod-writer-json output_director.json"
-
+INPUT="--aod-file @input_data.txt --aod-writer-keep dangling"
 
 o2-analysis-lf-cluster-studies-tree-creator $CONF|\
 
@@ -16,10 +16,13 @@ o2-analysis-lf-cluster-studies-tree-creator $CONF|\
     o2-analysis-track-propagation $CONF|\
     o2-analysis-trackselection $CONF|\
     o2-analysis-multiplicity-table $CONF|\
+    o2-analysis-ft0-corrected-table $CONF|\
+    o2-analysis-lf-lambdakzerobuilder $CONF|\
     o2-analysis-pid-tpc-base $CONF|\
     o2-analysis-pid-tpc $CONF|\
+    o2-analysis-pid-tof $CONF|\
     o2-analysis-pid-tof-base $CONF|\
-    o2-analysis-pid-tof-full $CONF $OUTPUT_DIR > $LOGFILE
+    o2-analysis-pid-tof-full $CONF $INPUT $OUTPUT_DIR > $LOGFILE
 
 
 # report the status of the workflow
