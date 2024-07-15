@@ -85,68 +85,27 @@ class DataHandler(Dataset):
         '''
         
         # cluster size
-        self.dataset = self.dataset.with_columns(cosL=(1 / (pl.col('tgL')**2 + 1)))
-        self.dataset = self.dataset.with_columns(meanClSize=((pl.col('clSizeL0') + pl.col('clSizeL1') + pl.col('clSizeL2') + pl.col('clSizeL3') + pl.col('clSizeL4') + pl.col('clSizeL5') + pl.col('clSizeL6')) / 7))
-        self.dataset = self.dataset.with_columns(clSizeCosL=(pl.col('meanClSize') * pl.col('cosL')))
-        self.dataset = self.dataset.with_columns(
-            nSigmaAbsDeu=abs(pl.col('nSigmaDeu')),
-            nSigmaAbsP=abs(pl.col('nSigmaP')),
-            nSigmaAbsK=abs(pl.col('nSigmaK')),
-            nSigmaAbsPi=abs(pl.col('nSigmaPi')),
-            nSigmaAbsE=abs(pl.col('nSigmaE'))
-            )
+        self.dataset = self.dataset.with_columns(fPAbs=np.abs(pl.col('fP')))
+        self.dataset = self.dataset.with_columns(fPt=pl.col('fP') / np.cosh(pl.col('fEta')))
+        self.dataset = self.dataset.with_columns(fCosL=(1 / np.cosh(pl.col('fEta'))))
+        for layer in range(7):
+            read4Bits = lambda x, layer: (x >> layer*4) & 0b1111
+            self.dataset = self.dataset.with_columns(pl.col('fItsClusterSize').apply(read4Bits, args=(layer,))).alias(f'fItsClusterSizeL{layer}')
+        self.dataset = self.dataset.with_columns(fMeanItsClSize=((pl.col('fItsClusterSizeL0') + pl.col('fItsClusterSizeL1') + pl.col('fItsClusterSizeL2') + pl.col('fItsClusterSizeL3') + pl.col('fItsClusterSizeL4') + pl.col('fItsClusterSizeL5') + pl.col('fItsClusterSizeL6')) / 7))
+        self.dataset = self.dataset.with_columns(fClSizeCosL=(pl.col('fMeanItsClSize') * pl.col('fCosL')))
         
-        self.dataset = self.dataset.with_columns([
-            pl.when(pl.col(f'clSizeL{layer}') < 0).then(np.nan).otherwise(pl.col(f'clSizeL{layer}')).alias(f'clSizeL{layer}')
-            for layer in range(7)
-            ])
-        
-        # deltaP
-        self.dataset = self.dataset.with_columns(deltaP = (pl.col('pTPC') - pl.col('pITS')) / pl.col('pTPC'))
+        #self.dataset = self.dataset.with_columns([
+        #    pl.when(pl.col(f'fItsClusterSizeL{layer}') < 0).then(np.nan).otherwise(pl.col(f'clSizeL{layer}')).alias(f'clSizeL{layer}')
+        #    for layer in range(7)
+        #    ])
 
-        # partID, mass, beta
-        self.dataset = self.dataset.with_columns(
-            partPDG=np.nan,
-            partID=np.nan,
-            mass=np.nan,
-            beta=np.nan
-            )
-        
-        for idx, part in enumerate(self.cfg['species']):    
-            
-            cfgTags = self.cfg['selTags'][part]
-            self.dataset = self.dataset.with_columns(
-                partPDG=pl.when((pl.col(f'nSigmaAbs{part}') < cfgTags['selfSel']),
-                                (pl.col(f'nSigmaAbs{cfgTags["part1"]}') > cfgTags['part1Sel']),
-                                (pl.col(f'nSigmaAbs{cfgTags["part2"]}') > cfgTags['part2Sel']),
-                                (pl.col('p') < cfgTags['pmax'])).then(ParticlePDG[part]).otherwise(pl.col('partPDG')),
-                partID=pl.when((pl.col(f'nSigmaAbs{part}') < cfgTags['selfSel']),
-                                (pl.col(f'nSigmaAbs{cfgTags["part1"]}') > cfgTags['part1Sel']),
-                                (pl.col(f'nSigmaAbs{cfgTags["part2"]}') > cfgTags['part2Sel']),
-                                (pl.col('p') < cfgTags['pmax'])).then(idx).otherwise(pl.col('partID')),
-                mass=pl.when((pl.col(f'nSigmaAbs{part}') < cfgTags['selfSel']),
-                                (pl.col(f'nSigmaAbs{cfgTags["part1"]}') > cfgTags['part1Sel']),
-                                (pl.col(f'nSigmaAbs{cfgTags["part2"]}') > cfgTags['part2Sel']),
-                                (pl.col('p') < cfgTags['pmax'])).then(ParticleMasses[part]).otherwise(pl.col('mass')),
-                beta=pl.when((pl.col(f'nSigmaAbs{part}') < cfgTags['selfSel']),
-                                (pl.col(f'nSigmaAbs{cfgTags["part1"]}') > cfgTags['part1Sel']),
-                                (pl.col(f'nSigmaAbs{cfgTags["part2"]}') > cfgTags['part2Sel']),
-                                (pl.col('p') < cfgTags['pmax'])).then(pl.col('p') / np.sqrt(pl.col('p')**2 + ParticleMasses[part]**2)).otherwise(pl.col('beta'))
-                )
-            
+        self.dataset = self.dataset.with_columns(pl.col('fPartID').apply(lambda x: ParticleMasses[self.cfg['species'][x+1]])).alias('fMass')
+        self.dataset = self.dataset.with_columns(fBeta=(pl.col('fP') / np.sqrt(pl.col('fPAbs')**2 + pl.col('fMass')**2)))
+        self.dataset = self.dataset.with_columns(fBetaAbs=np.abs(pl.col('fBeta')))
+
         # drop unidentified particles
         if self.mode == 'train':
-            self.dataset = self.dataset.filter(pl.col('partID') != np.nan)
-
-    def apply_quality_selection_cuts(self):
-        '''
-            Apply quality selection
-        '''
-
-        self.dataset = self.dataset.filter((pl.col('nClusTPC') > self.cfg['cuts']['nClusTPCmin']) & 
-                                         (pl.col('chi2ITSTPC') < self.cfg['cuts']['chi2ITSTPCmax']) &
-                                         (abs(pl.col('eta')) > self.cfg['cuts']['etamax'])
-                                         )
+            self.dataset = self.dataset.filter(pl.col('fPartID') != 0)
         
     def normalize(self):
         '''
@@ -157,18 +116,8 @@ class DataHandler(Dataset):
             mean = np.nanmean(self.normalized_dataset[feature])
             std = np.nanstd(self.normalized_dataset[feature])
             factor = 1.
-            if 'clSizeL' in feature: factor = 2.
+            if 'fItsClusterSizeL' in feature: factor = 2.
             self.normalized_dataset = self.normalized_dataset.with_columns(((pl.col(feature) - mean) / (factor * std)).alias(feature))
-        
-    def eliminate_nan(self):
-        '''
-            Eliminate NaN values
-        '''
-        
-        self.normalized_dataset = self.normalized_dataset.with_columns([
-            pl.when(pl.col(f'clSizeL{layer}') == np.nan).then(-1.).otherwise(pl.col(f'clSizeL{layer}')).alias(f'clSizeL{layer}')
-            for layer in range(7)
-            ])
     
     @property
     def class_weights(self):
@@ -177,8 +126,8 @@ class DataHandler(Dataset):
         '''
         
         weights = np.zeros(self.num_particles)
-        for idx, part in enumerate(self.cfg['species']):
-            weights[idx] = len(self.dataset.filter(pl.col('partID') == idx)) / len(self.dataset)
+        for ipart, part in enumerate(self.cfg['species']):
+            weights[ipart] = len(self.dataset.filter(pl.col('fPartID') == ipart+1)) / len(self.dataset)
         
         return weights
     
@@ -190,7 +139,7 @@ class DataHandler(Dataset):
         
         counts = np.zeros(self.num_particles)
         for ipart, part in enumerate(self.cfg['species']):
-            counts[ipart] = len(self.dataset.filter(pl.col('partID') == ipart))
+            counts[ipart] = len(self.dataset.filter(pl.col('partID') == ipart+1))
         
         return counts
         
@@ -216,10 +165,10 @@ class DataHandler(Dataset):
         
         max_count = max(self.class_counts)
         for ipart, part in enumerate(self.cfg['species']):
-            part_count = len(self.dataset.filter(pl.col('partID') == ipart))
+            part_count = len(self.dataset.filter(pl.col('fPartID') == ipart+1))
             if part_count < max_count:
                 n_new_samples = max_count - part_count
-                filtered_ds = self.dataset.filter(pl.col('partID') == ipart)
+                filtered_ds = self.dataset.filter(pl.col('fPartID') == ipart+1)
                 sampled_ds = filtered_ds.sample(n=n_new_samples, with_replacement=True)
                 self.dataset = pl.concat([self.dataset, sampled_ds])
 

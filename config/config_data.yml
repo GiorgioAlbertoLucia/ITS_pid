@@ -7,9 +7,9 @@ visualize: False
 
 
 # Particle species
-species: [ #'E',
-          'Pi', 'K', 'P', 
-          #'Deu'
+species: ['El',
+          'Pi', 'Ka', 'Pr', 
+          'De', 'He'
           ]
 
 # Selections tags 

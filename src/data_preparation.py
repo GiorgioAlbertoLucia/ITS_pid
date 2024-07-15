@@ -93,7 +93,8 @@ def data_preparation(input_files:list, output_file:str, cfg_data_file:str, cfg_o
 
 if __name__ == '__main__':
 
-    input_files = ['../../data/0720/its_PIDStudy.root']
+    #input_files = ['../../data/0720/its_PIDStudy.root']
+    input_files = ['/galucia/ITS_pid/o2/tree_creator/AO2D.root']
     cfg_data_file = '../config/config_data.yml'
     cfg_output_file = '../config/config_outputs.yml'
     output_file = '../output/data_preparation.root'
