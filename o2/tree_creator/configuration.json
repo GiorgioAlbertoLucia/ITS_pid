@@ -29,7 +29,7 @@
         "processRun3": "true"
     },
     "event-selection-task": {
-        "syst": "PbPb",
+        "syst": "pp",
         "muonSelection": "0",
         "maxDiffZvtxFT0vsPV": "1",
         "isMC": "false",
@@ -211,48 +211,30 @@
         "v0track_NclsItsMin": "0",
         "v0track_NclsTpcMin": "100",
         "v0track_NclsTpcMaxShared": "5",
-        "etaMaxV0dau": "0.800000012",
-        "v0setting_dcaV0daughters": "0.5",
+        "etaMaxV0dau": "0.8",
+        "v0setting_dcaV0daughters": "1",
         "v0setting_dcaV0fromPV": "1",
         "v0setting_dcaDaughtersToPV": "1",
         "v0setting_radiusMax": "100",
         "v0setting_radiusMin": "5",
-        "v0setting_cosPA": "0.99000001",
+        "v0setting_cosPA": "0.99",
         "v0setting_nsigmaTPC": "4",
-        "v0setting_massWindowLambda": "0.0199999996",
-        "v0setting_massWindowK0s": "0.0199999996",
-        "casc_setting_dcaV0daughters": "0.100000001",
-        "casc_setting_cosPA": "0.99000001",
-        "casc_setting_massWindowOmega": "0.00999999978",
-        "casc_setting_massWindowXi": "0.00999999978",
-        "desetting_nsigmaCutTPC": "4",
+        "v0setting_massWindowLambda": "0.06",
+        "v0setting_massWindowK0s": "0.01",
+        "v0setting_nsigmatpcEl": "1",
+        "lambdasetting_qtAPcut": "0.02",
+        "casc_setting_dcaV0daughters": "0.1",
+        "casc_setting_cosPA": "0.99",
+        "casc_setting_massWindowOmega": "0.02",
+        "casc_setting_massWindowXi": "0.01",
+        "desetting_nsigmaCutTPC": "2",
+        "desetting_nsigmaCutTOF": "2",
         "he3setting_compensatePIDinTracking": "true",
-        "he3setting_nsigmaCutTPC": "4",
-        "cfgBetheBlochParamsDe": {
+        "he3setting_nsigmaCutTPC": "2",
+        "he3setting_nsigmaCutTOF": "2",
+        "setting_BetheBlochParams": {
             "labels_rows": [
-                "De"
-            ],
-            "labels_cols": [
-                "p0",
-                "p1",
-                "p2",
-                "p3",
-                "p4",
-                "resolution"
-            ],
-            "values": [
-                [
-                    "-1.0000000000000001e+32",
-                    "-1.0000000000000001e+32",
-                    "-1.0000000000000001e+32",
-                    "-1.0000000000000001e+32",
-                    "-1.0000000000000001e+32",
-                    "-1.0000000000000001e+32"
-                ]
-            ]
-        },
-        "cfgBetheBlochParams": {
-            "labels_rows": [
+                "De",
                 "He3"
             ],
             "labels_cols": [
@@ -265,16 +247,25 @@
             ],
             "values": [
                 [
-                    "-1.0000000000000001e+32",
-                    "-1.0000000000000001e+32",
-                    "-1.0000000000000001e+32",
-                    "-1.0000000000000001e+32",
-                    "-1.0000000000000001e+32",
-                    "-1.0000000000000001e+32"
+                    "-136.71",
+                    "0.441",
+                    "0.2269",
+                    "1.347",
+                    "0.8035",
+                    "0.09"
+                ],
+                [
+                    "-321.34",
+                    "0.6539",
+                    "1.591",
+                    "0.8225",
+                    "2.363",
+                    "0.09"
                 ]
             ]
         },
-        "processRun3": "true"
+        "processDataV0Casc": "true",
+        "processDataNuclei": "true"
     },
     "tof-signal": {
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",

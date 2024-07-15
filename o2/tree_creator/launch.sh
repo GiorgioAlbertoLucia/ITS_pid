@@ -1,7 +1,7 @@
 LOGFILE="output.log"
 CONF="-b --configuration json://configuration.json"
 OUTPUT_DIR="--aod-writer-json output_director.json"
-INPUT="--aod-file @input_data.txt --aod-writer-keep dangling"
+INPUT="--aod-file @input_data.txt"
 
 o2-analysis-lf-cluster-studies-tree-creator $CONF|\
 
