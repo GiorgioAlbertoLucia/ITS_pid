@@ -1,0 +1,101 @@
+#
+# Configuration file for the Bethe-Bloch parameterisation
+#
+
+species: ["El", "Pi", "Ka", "Pr", "De", "He"]
+
+p:
+  plot: { 
+          name: "clSizeCosL_vs_p",
+          title: "#LT Cluster size #GT #times #LT cos #lambda #GT vs #it{p}; #it{p} (GeV/#it{c}); #LT Cluster size #GT #times #LT cos #lambda #GT; Counts",
+          xVariable: "fPAbs",
+          nXBins: 200,
+          xMin: 0.5,
+          xMax: 5,
+          xLabel: "#it{p} (GeV/#it{c})",
+          yVariable: "fClSizeCosL",
+          nYBins: 90,
+          yMin: 0,
+          yMax: 15,
+          yLabel: "#LT Cluster size #GT #times #LT cos #lambda #GT",
+          type: "TH2F",
+          particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+        }
+  xMinFit: 0.5
+  xMaxFit: 2
+  yMinFit: 0
+  yMaxFit: 8
+  xMaxDoubleFit: 0.8
+
+  BBparams: {
+              'kp1': -84.3,
+              'kp2': -1.52,
+              'kp3': 0.22,
+              'kp4': 1.37,
+              'kp5': 1.57,
+            }   
+
+  plot_nsigma: {
+                name: "nsigma_vs_p",
+                title: "n #sigma vs #it{p}; #it{p} (GeV/#it{c}); n #sigma; Counts",
+                xVariable: "fP",
+                nXBins: 200,
+                xMin: -5,
+                xMax: 5,
+                xLabel: "#it{p} (GeV/#it{c})",
+                yVariable: "fNSigmaPr",
+                nYBins: 100,
+                yMin: -25,
+                yMax: 25,
+                yLabel: "n #sigma",
+                type: "TH2F",
+                particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+               }           
+
+beta:
+  plot: { 
+          name: "clSizeCosL_vs_beta",
+          title: "#LT Cluster size #GT #times #LT cos #lambda #GT vs #it{beta}; #beta; #LT Cluster size #GT #times #LT cos #lambda #GT; Counts",
+          xVariable: "fBetaAbs",
+          nXBins: 100,
+          xMin: 0,
+          xMax: 1,
+          xLabel: "#beta",
+          yVariable: "fClSizeCosL",
+          nYBins: 90,
+          yMin: 0,
+          yMax: 15,
+          yLabel: "#LT Cluster size #GT #times #LT cos #lambda #GT",
+          type: "TH2F",
+          particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+        }
+  xMinFit: 0.4
+  xMaxFit: 1
+  yMinFit: 0
+  yMaxFit: 8
+  xMaxDoubleFit: 0.6
+
+  BBparams: {
+              'kp1': -14.5,
+              'kp2': -8.64,
+              'kp3': 0.04,
+              'kp4': 1.58,
+              'kp5': 0.83,
+            }
+  
+  plot_nsigma: {
+                name: "nsigma_vs_beta",
+                title: "n #sigma vs #beta; #beta; n #sigma; Counts",
+                xVariable: "fBeta",
+                nXBins: 200,
+                xMin: -1,
+                xMax: 1,
+                xLabel: "#beta",
+                yVariable: "fNSigmaPr",
+                nYBins: 100,
+                yMin: -10,
+                yMax: 10,
+                yLabel: "n #sigma",
+                type: "TH2F",
+                particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+               }

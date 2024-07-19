@@ -25,9 +25,10 @@ def data_visualization(train_handler:DataHandler, cfg_output:dict, cfg_data:dict
     output_file = TFile(output_file, 'RECREATE')
     
     out_dirs = {dir: output_file.mkdir(dir) for dir in cfg_output['outDirs']}
+    print(type(train_handler.dataset))
     hist_handler = {'all': HistHandler.createInstance(train_handler.dataset)}
     for ipart, part in enumerate(cfg_data['species']):    
-        ds = train_handler.dataset.filter(pl.col('partID') == ipart)
+        ds = train_handler.dataset.filter(pl.col('fPartID') == ipart+1)
         hist_handler[part] = HistHandler.createInstance(ds)
     
     
@@ -54,11 +55,13 @@ def data_visualization(train_handler:DataHandler, cfg_output:dict, cfg_data:dict
                 out_dirs[part].cd()
                 hist.Write()
 
+    
+
     output_file.Close()
     
 
 @timeit
-def data_preparation(input_files:list, output_file:str, cfg_data_file:str, cfg_output_file:str):
+def data_preparation(input_files:list, output_file:str, cfg_data_file:str, cfg_output_file:str, **kwargs):
     '''
         Prepare the data for the model
 
@@ -76,11 +79,11 @@ def data_preparation(input_files:list, output_file:str, cfg_data_file:str, cfg_o
         cfg_data = yaml.safe_load(file)
 
     print(tc.BOLD+tc.GREEN+'Data preparation'+tc.RESET)
-    data_handler = DataHandler(input_files, cfg_data_file)
-    data_handler.apply_quality_selection_cuts()
-    data_handler.eliminate_nan()
-    if cfg_data['oversample']:  data_handler.oversample()
-    data_handler.normalize()
+    data_handler = DataHandler(input_files, cfg_data_file, **kwargs)
+    #data_handler.apply_quality_selection_cuts()
+    #data_handler.eliminate_nan()
+    #if cfg_data['oversample']:  data_handler.oversample()
+    #data_handler.normalize()
 
     # train_handler, test_handler = data_handler.train_test_split(cfg_data['test_size'])
     train_handler = data_handler
@@ -94,10 +97,12 @@ def data_preparation(input_files:list, output_file:str, cfg_data_file:str, cfg_o
 if __name__ == '__main__':
 
     #input_files = ['../../data/0720/its_PIDStudy.root']
-    input_files = ['/galucia/ITS_pid/o2/tree_creator/AO2D.root']
+    input_files = ['/home/galucia/ITS_pid/o2/tree_creator/AO2D.root']
     cfg_data_file = '../config/config_data.yml'
     cfg_output_file = '../config/config_outputs.yml'
     output_file = '../output/data_preparation.root'
+    tree_name = 'O2clsttableextra'
+    folder_name = 'DF_*'
 
-    data_preparation(input_files, output_file, cfg_data_file, cfg_output_file)
+    data_preparation(input_files, output_file, cfg_data_file, cfg_output_file, tree_name=tree_name, folder_name=folder_name)
 

@@ -1,0 +1,32 @@
+#
+# Quality assurance configuration file
+#
+
+cl_size_vs_eta:
+  meanClSize_vs_eta: {  name: "meanClSize_vs_eta",
+              title: "<Cluster Size> vs #eta; #eta; #LT Cluster size #GT; Counts",
+              xVariable: "fEta",
+              nXBins: 160,
+              xMin: -0.8,
+              xMax: 0.8,
+              yVariable: "fMeanItsClSize",
+              nYBins: 30,
+              yMin: 0,
+              yMax: 15,
+              type: "TH2F",
+              particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+              }
+  
+  clSizeCosL_vs_eta: {  name: "clSizeCosL_vs_eta",
+              title: "#LT Cluster size #GT #times #LT cos #lambda #GT vs #eta; #eta; #LT Cluster size #GT #times #LT cos #lambda #GT; Counts",
+              xVariable: "fEta",
+              nXBins: 160,
+              xMin: -0.8,
+              xMax: 0.8,
+              yVariable: "fClSizeCosL",
+              nYBins: 30,
+              yMin: 0,
+              yMax: 15,
+              type: "TH2F",
+              particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+              }

@@ -3,8 +3,7 @@
 #
 
 # enabling configuration
-visualize: False
-
+visualize: True
 
 # Particle species
 species: ['El',
@@ -27,8 +26,8 @@ cuts:     { nClusTPCmin: 80,
           }
 
 nn_mode: 'classification' # 'classification' or 'regression'
-features: ['clSizeL0', 'clSizeL1', 'clSizeL2', 'clSizeL3', 'clSizeL4', 'clSizeL5', 'clSizeL6', 'eta', 'phi', 'tgL', 'p', 'meanClSize', 'clSizeCosL']
-#features: ['clSizeL0', 'clSizeL1', 'clSizeL2', 'clSizeL3', 'clSizeL4', 'clSizeL5', 'clSizeL6', 'eta', 'phi', 'tgL', 'p']
+features: ['fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fItsClusterSizeL3', 'fItsClusterSizeL4', 'fItsClusterSizeL5', 'fItsClusterSizeL6', 'fEta', 'fPhi', 'fCosL', 'fP', 'fMeanItsClSize', 'fClSizeCosL']
+#features: ['fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fItsClusterSizeL3', 'fItsClusterSizeL4', 'fItsClusterSizeL5', 'fItsClusterSizeL6', 'fEta', 'fPhi', 'fCosL', 'fP']
 target: 'partID'
 oneHot: False
 useClasses: True
