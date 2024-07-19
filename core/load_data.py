@@ -6,13 +6,14 @@
 import os
 import polars as pl
 import uproot
+from hipe4ml.tree_handler import TreeHandler
 
 import sys 
 sys.path.append('..')
 sys.path.append('../..')
 from framework.utils.terminal_colors import TerminalColors as tc
 
-def LoadData(inFiles:list) -> pl.DataFrame:
+def LoadData(inFiles:list, **kwargs) -> pl.DataFrame:
     '''
     Load data from multiple files
 
@@ -23,12 +24,12 @@ def LoadData(inFiles:list) -> pl.DataFrame:
 
     df = pl.DataFrame()
     for inFile in inFiles:
-        df_tmp = LoadDataFile(inFile)
+        df_tmp = LoadDataFile(inFile, **kwargs)
         if df_tmp is not None:  df = pl.concat([df, df_tmp])
 
     return df
 
-def LoadDataFile(inFile:str):
+def LoadDataFile(inFile:str, **kwargs):
     '''
     Load data from a single file
     
@@ -43,8 +44,9 @@ def LoadDataFile(inFile:str):
         return None
     
     print("Loading data from: "+tc.UNDERLINE+tc.BLUE+f'{inFile}'+tc.RESET)
-    if inFile.endswith(".root"):        df = LoadRoot(inFile)   
-    elif inFile.endswith(".parquet"):   df = LoadParquet(inFile)
+    if inFile.endswith(".root") and "AO2D" in inFile:   df = LoadAO2D(inFile, **kwargs)
+    elif inFile.endswith(".root"):                        df = LoadRoot(inFile)   
+    elif inFile.endswith(".parquet"):                   df = LoadParquet(inFile)
     else:
         print("Unknown file type: "+tc.UNDERLINE+tc.RED+f'{inFile}'+tc.RESET)
         return None
@@ -65,6 +67,22 @@ def LoadRoot(inFile:str) -> pl.DataFrame:
     df = pl.from_pandas(df)
 
     return df
+
+def LoadAO2D(inFile:str, **kwargs) -> pl.DataFrame:
+    '''
+    Load data from an AO2D file
+
+    Parameters
+    ----------
+    inFile (str): input file
+    '''
+
+    tree_name = kwargs.get('tree_name', "O2clsttable")
+    folder_name = kwargs.get('folder_name', "DF_*")
+    th = TreeHandler(inFile, tree_name, folder_name=folder_name)
+    df = th.get_data_frame()
+    return pl.from_pandas(df)
+    
 
 def LoadParquet(inFile:str) -> pl.DataFrame:
     '''

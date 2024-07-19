@@ -34,7 +34,7 @@ class DataHandler(Dataset):
 
         self.mode = kwargs.get('mode', 'train')
 
-        self.dataset: pl.DataFrame = LoadData(dataFiles)
+        self.dataset: pl.DataFrame = LoadData(dataFiles, **kwargs)
         self._new_columns()
         self.normalized_dataset: pl.DataFrame = copy.deepcopy(self.dataset)
         self.features = self.cfg['features']
@@ -89,17 +89,19 @@ class DataHandler(Dataset):
         self.dataset = self.dataset.with_columns(fPt=pl.col('fP') / np.cosh(pl.col('fEta')))
         self.dataset = self.dataset.with_columns(fCosL=(1 / np.cosh(pl.col('fEta'))))
         for layer in range(7):
-            read4Bits = lambda x, layer: (x >> layer*4) & 0b1111
-            self.dataset = self.dataset.with_columns(pl.col('fItsClusterSize').apply(read4Bits, args=(layer,))).alias(f'fItsClusterSizeL{layer}')
-        self.dataset = self.dataset.with_columns(fMeanItsClSize=((pl.col('fItsClusterSizeL0') + pl.col('fItsClusterSizeL1') + pl.col('fItsClusterSizeL2') + pl.col('fItsClusterSizeL3') + pl.col('fItsClusterSizeL4') + pl.col('fItsClusterSizeL5') + pl.col('fItsClusterSizeL6')) / 7))
-        self.dataset = self.dataset.with_columns(fClSizeCosL=(pl.col('fMeanItsClSize') * pl.col('fCosL')))
+            self.dataset = self.dataset.with_columns((np.right_shift(pl.col("fItsClusterSize"), (layer * 4)) & 0xF).alias(f'fItsClusterSizeL{layer}'))
         
+        self.dataset =  self.dataset.with_columns(fNClustersIts=((pl.col('fItsClusterSizeL0') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL1') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL2') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL3') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL4') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL5') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL6') > 0).cast(pl.Int32)))
+        self.dataset = self.dataset.filter(pl.col('fNClustersIts') > 0)
+        self.dataset = self.dataset.with_columns(fMeanItsClSize=((pl.col('fItsClusterSizeL0') + pl.col('fItsClusterSizeL1') + pl.col('fItsClusterSizeL2') + pl.col('fItsClusterSizeL3') + pl.col('fItsClusterSizeL4') + pl.col('fItsClusterSizeL5') + pl.col('fItsClusterSizeL6')) / pl.col('fNClustersIts')))
+        self.dataset = self.dataset.with_columns(fClSizeCosL=(pl.col('fMeanItsClSize') * pl.col('fCosL')))
+
         #self.dataset = self.dataset.with_columns([
         #    pl.when(pl.col(f'fItsClusterSizeL{layer}') < 0).then(np.nan).otherwise(pl.col(f'clSizeL{layer}')).alias(f'clSizeL{layer}')
         #    for layer in range(7)
         #    ])
 
-        self.dataset = self.dataset.with_columns(pl.col('fPartID').apply(lambda x: ParticleMasses[self.cfg['species'][x+1]])).alias('fMass')
+        self.dataset = self.dataset.with_columns(pl.col('fPartID').apply(lambda x: ParticleMasses[self.cfg['species'][x-1]]).alias('fMass'))
         self.dataset = self.dataset.with_columns(fBeta=(pl.col('fP') / np.sqrt(pl.col('fPAbs')**2 + pl.col('fMass')**2)))
         self.dataset = self.dataset.with_columns(fBetaAbs=np.abs(pl.col('fBeta')))
 
