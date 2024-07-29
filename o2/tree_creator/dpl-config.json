@@ -761,13 +761,15 @@
         "casc_setting_cosPA": "0.99000001",
         "casc_setting_massWindowOmega": "0.0199999996",
         "casc_setting_massWindowXi": "0.00999999978",
+        "casc_setting_nsigmaTPC": "3",
         "desetting_nClsIts": "6",
         "desetting_nsigmaCutTPC": "2",
         "desetting_nsigmaCutTOF": "2",
         "he3setting_nClsIts": "6",
         "he3setting_compensatePIDinTracking": "true",
         "he3setting_nsigmaCutTPC": "2",
-        "he3setting_nsigmaCutTOF": "2",
+        "he3setting_tofmasslow": "1.79999995",
+        "he3setting_tofmasshigh": "4.19999981",
         "setting_BetheBlochParams": {
             "labels_rows": [
                 "De",
@@ -801,7 +803,9 @@
             ]
         },
         "processDataV0Casc": "true",
-        "processDataNuclei": "true"
+        "processDataNuclei": "true",
+        "processMcV0Casc": "false",
+        "processMcNuclei": "false"
     },
     "lambdakzero-v0-data-link-builder": {
         "processFound": "true",
