@@ -100,7 +100,8 @@ if __name__ == '__main__':
     input_files = ['/home/galucia/ITS_pid/o2/tree_creator/AO2D.root']
     cfg_data_file = '../config/config_data.yml'
     cfg_output_file = '../config/config_outputs.yml'
-    output_file = '../output/data_preparation.root'
+    output_dir = '../output/LHC22o_pass6_minBias_slice'
+    output_file = output_dir+'/data_preparation.root'
     tree_name = 'O2clsttableextra'
     folder_name = 'DF_*'
 
