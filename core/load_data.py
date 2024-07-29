@@ -38,15 +38,17 @@ def LoadDataFile(inFile:str, **kwargs):
     inFile (str): input file  
     '''
 
+    force_option = kwargs.get('force_option', None)
+
     # check if the file exists
     if not os.path.exists(inFile):  
         print("File not found: "+tc.UNDERLINE+tc.RED+f'{inFile}'+tc.RESET)
         return None
     
     print("Loading data from: "+tc.UNDERLINE+tc.BLUE+f'{inFile}'+tc.RESET)
-    if inFile.endswith(".root") and "AO2D" in inFile:   df = LoadAO2D(inFile, **kwargs)
-    elif inFile.endswith(".root"):                        df = LoadRoot(inFile)   
-    elif inFile.endswith(".parquet"):                   df = LoadParquet(inFile)
+    if inFile.endswith(".root") and ("AO2D" in inFile or force_option=="AO2D"): df = LoadAO2D(inFile, **kwargs)
+    elif inFile.endswith(".root"):                                              df = LoadRoot(inFile)   
+    elif inFile.endswith(".parquet"):                                           df = LoadParquet(inFile)
     else:
         print("Unknown file type: "+tc.UNDERLINE+tc.RED+f'{inFile}'+tc.RESET)
         return None
@@ -81,7 +83,9 @@ def LoadAO2D(inFile:str, **kwargs) -> pl.DataFrame:
     folder_name = kwargs.get('folder_name', "DF_*")
     th = TreeHandler(inFile, tree_name, folder_name=folder_name)
     df = th.get_data_frame()
-    return pl.from_pandas(df)
+    pl_df = pl.DataFrame(df)
+    del df
+    return pl_df
     
 
 def LoadParquet(inFile:str) -> pl.DataFrame:

@@ -91,7 +91,7 @@ class DataHandler(Dataset):
         for layer in range(7):
             self.dataset = self.dataset.with_columns((np.right_shift(pl.col("fItsClusterSize"), (layer * 4)) & 0xF).alias(f'fItsClusterSizeL{layer}'))
         
-        self.dataset =  self.dataset.with_columns(fNClustersIts=((pl.col('fItsClusterSizeL0') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL1') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL2') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL3') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL4') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL5') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL6') > 0).cast(pl.Int32)))
+        self.dataset = self.dataset.with_columns(fNClustersIts=((pl.col('fItsClusterSizeL0') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL1') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL2') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL3') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL4') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL5') > 0).cast(pl.Int32) + (pl.col('fItsClusterSizeL6') > 0).cast(pl.Int32)))
         self.dataset = self.dataset.filter(pl.col('fNClustersIts') > 0)
         self.dataset = self.dataset.with_columns(fMeanItsClSize=((pl.col('fItsClusterSizeL0') + pl.col('fItsClusterSizeL1') + pl.col('fItsClusterSizeL2') + pl.col('fItsClusterSizeL3') + pl.col('fItsClusterSizeL4') + pl.col('fItsClusterSizeL5') + pl.col('fItsClusterSizeL6')) / pl.col('fNClustersIts')))
         self.dataset = self.dataset.with_columns(fClSizeCosL=(pl.col('fMeanItsClSize') * pl.col('fCosL')))
