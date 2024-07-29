@@ -77,5 +77,7 @@ def purityLambda(inFile:str, inHist:str, outFile:TFile):
 
 if __name__ == '__main__':
 
-    outFile = TFile('/home/galucia/ITS_pid/output/purity.root', 'RECREATE')
+    output_dir = '../output/LHC22o_pass6_minBias_slice'
+    output_file = output_dir+'/purity.root'
+    outFile = TFile(output_file, 'RECREATE')
     purityLambda('/home/galucia/ITS_pid/o2/tree_creator/AnalysisResults.root', 'lf-tree-creator-cluster-studies/LFTreeCreator/massLambda', outFile)
