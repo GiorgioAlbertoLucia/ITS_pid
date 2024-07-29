@@ -124,6 +124,7 @@ class PLHistHandler(HistHandler):
     def buildTH1(self, xVariable: str, axisSpecX: AxisSpec) -> TH1F:
         hist = THist([axisSpecX]).hist
         for x in self.inData[xVariable]:    hist.Fill(x)
+        for ibin in range(1, hist.GetNbinsX() + 1):    hist.SetBinError(ibin, np.sqrt(hist.GetBinContent(ibin)))
         return hist
     
     def buildTH2(self, xVariable: str, yVariable: str, axisSpecX: AxisSpec, axisSpecY: AxisSpec) -> TH1F:
