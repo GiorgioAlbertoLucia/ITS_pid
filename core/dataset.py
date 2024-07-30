@@ -118,7 +118,7 @@ class DataHandler(Dataset):
             mean = np.nanmean(self.normalized_dataset[feature])
             std = np.nanstd(self.normalized_dataset[feature])
             factor = 1.
-            if 'fItsClusterSizeL' in feature: factor = 2.
+            #if 'fItsClusterSizeL' in feature: factor = 2.
             self.normalized_dataset = self.normalized_dataset.with_columns(((pl.col(feature) - mean) / (factor * std)).alias(feature))
     
     @property

@@ -93,12 +93,13 @@ if __name__ == '__main__':
 
     from data_preparation import data_preparation
 
-    input_files = ['../../data/0720/its_PIDStudy.root']
+    #input_files = ['../../data/0720/its_PIDStudy.root']
+    input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root']
     cfg_data_file = '../config/config_data.yml'
     cfg_output_file = '../config/config_outputs.yml'
     output_file = '../output/data_preparation.root'
 
-    train_handler, test_handler = data_preparation(input_files, output_file, cfg_data_file, cfg_output_file)
-    test_handler = copy.deepcopy(train_handler)
+    train_handler, test_handler = data_preparation(input_files, output_file, cfg_data_file, cfg_output_file, normalize=True)
+    #test_handler = copy.deepcopy(train_handler)
 
-    train_model(train_handler, train_handler, cfg_data_file)
+    train_model(train_handler, test_handler, cfg_data_file)
