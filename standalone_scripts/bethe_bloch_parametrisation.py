@@ -402,11 +402,11 @@ class BetheBlochParametrisation:
     ########### General
     
     @timeit
-    def run_all(self, cfg_label, output_dir) -> None:
+    def run_all(self, cfg_label: str, output_dir: TDirectory, fit_particle: str) -> None:
 
         self._set_output_dir(output_dir)
         
-        self.select_fit_particle('Pr')
+        self.select_fit_particle(fit_particle)
         self.generate_graph(cfg_label)
         self.fit_bethe_bloch(cfg_label)
         for part in self.config['species']:
@@ -423,10 +423,12 @@ if __name__ == '__main__':
     logging.basicConfig(filename="output.log", level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
     input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root']
+    #input_files = ['/data/galucia/its_pid/MC_LHC24f3/MC_LHC24f3.root']
     #input_files = ['/Users/glucia/Projects/ALICE/data/its_pid/LHC22o_pass7_minBias_small.root']
     cfg_data_file = '../config/config_data.yml'
     cfg_output_file = 'bethe_bloch_parametrisation.yml'
-    output_dir = '../output/LHC22o_pass6_minBias_slice'
+    output_dir = '../output/LHC22o_pass7_minBias_small'
+    #output_dir = '../output/MC'
     output_file = output_dir+'/bethe_bloch_parametrisation.root'
     tree_name = 'O2clsttable'
     folder_name = 'DF_*' 
@@ -437,6 +439,9 @@ if __name__ == '__main__':
     bb_param = BetheBlochParametrisation(data_handler, cfg_output_file)
 
     dir_p = outFile.mkdir('clsize_vs_p')
-    bb_param.run_all('p', dir_p)
+    bb_param.run_all('p', dir_p, 'Pr')
+
+    dir_beta = outFile.mkdir('clsize_vs_beta')
+    bb_param.run_all('beta', dir_beta, 'Pr')
     
     outFile.Close()

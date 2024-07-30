@@ -9,7 +9,7 @@ p:
           name: "clSizeCosL_vs_p",
           title: "#LT Cluster size #GT #times #LT cos #lambda #GT vs #it{p}; #it{p} (GeV/#it{c}); #LT Cluster size #GT #times #LT cos #lambda #GT; Counts",
           xVariable: "fPAbs",
-          nXBins: 47,
+          nXBins: 94,
           xMin: 0.3,
           xMax: 5,
           xLabel: "#it{p} (GeV/#it{c})",
