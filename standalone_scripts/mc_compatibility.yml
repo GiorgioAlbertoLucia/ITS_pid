@@ -1,0 +1,22 @@
+#
+# Configuration file for the MC compatibility analysis
+#
+
+#species: ["El", "Pi", "Ka", "Pr", "De", "He"]
+
+species: ["Pi", "Pr"]
+
+KS:
+  x_var: 'fPAbs'
+  x_min: 0.2
+  x_max: 2.0
+  x_step: 0.1
+  
+  ks_var: 'fClSizeCosLam'
+  nBins: 45
+  min: 0.
+  max: 15.
+  name: 'ks_hist'
+  title: 'KS hist'
+
+  xLabel: '#LF Cluster size #GT #times #LT cos #lambda #GT'
