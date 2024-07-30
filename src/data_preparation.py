@@ -3,6 +3,7 @@
 '''
 
 import copy
+import numpy as np
 import polars as pl
 import yaml
 from tqdm import tqdm
@@ -16,19 +17,23 @@ from framework.src.axis_spec import AxisSpec
 from framework.src.hist_handler import HistHandler
 from framework.utils.terminal_colors import TerminalColors as tc
 from framework.utils.timeit import timeit
+from utils.particles import ParticlePDG
 
-def data_visualization(train_handler:DataHandler, cfg_output:dict, cfg_data:dict, output_file:str):
+def data_visualization(train_handler:DataHandler, cfg_output:dict, cfg_data:dict, output_file:str, **kwargs):
 
     # data visualization    
     print(tc.BOLD+tc.GREEN+'Data visualization'+tc.RESET)
     print('Output file: '+tc.UNDERLINE+tc.BLUE+output_file+tc.RESET)
     output_file = TFile(output_file, 'RECREATE')
     
+    is_mc = kwargs.get('is_mc', False)
     out_dirs = {dir: output_file.mkdir(dir) for dir in cfg_output['outDirs']}
     print(type(train_handler.dataset))
     hist_handler = {'all': HistHandler.createInstance(train_handler.dataset)}
     for ipart, part in enumerate(cfg_data['species']):    
-        ds = train_handler.dataset.filter(pl.col('fPartID') == ipart+1)
+        ds = None
+        if is_mc:   ds = train_handler.dataset.filter(np.abs(pl.col('fPartIDMc')) == ParticlePDG[part])
+        else:       ds = train_handler.dataset.filter(pl.col('fPartID') == ipart+1)
         hist_handler[part] = HistHandler.createInstance(ds)
     
     
@@ -80,30 +85,31 @@ def data_preparation(input_files:list, output_file:str, cfg_data_file:str, cfg_o
 
     print(tc.BOLD+tc.GREEN+'Data preparation'+tc.RESET)
     data_handler = DataHandler(input_files, cfg_data_file, **kwargs)
-    #data_handler.apply_quality_selection_cuts()
-    #data_handler.eliminate_nan()
     #if cfg_data['oversample']:  data_handler.oversample()
-    #data_handler.normalize()
+    normalize_opt = kwargs.get('normalize', False)
+    if normalize_opt:   data_handler.normalize()
 
-    # train_handler, test_handler = data_handler.train_test_split(cfg_data['test_size'])
+    train_handler, test_handler = data_handler.train_test_split(cfg_data['test_size'])
     train_handler = data_handler
     test_handler = None
 
     if cfg_data['visualize']:
-        data_visualization(train_handler, cfg_output, cfg_data, output_file)
+        data_visualization(train_handler, cfg_output, cfg_data, output_file, **kwargs)
 
     return train_handler, test_handler
 
 if __name__ == '__main__':
 
     #input_files = ['../../data/0720/its_PIDStudy.root']
-    input_files = ['/home/galucia/ITS_pid/o2/tree_creator/AO2D.root']
+    #input_files = ['/home/galucia/ITS_pid/o2/tree_creator/AO2D.root']
+    input_files = ['/home/galucia/ITS_pid/o2/tree_creator/AO2D_MC_LHC24f3.root']
+    #input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root']
     cfg_data_file = '../config/config_data.yml'
     cfg_output_file = '../config/config_outputs.yml'
-    output_dir = '../output/LHC22o_pass6_minBias_slice'
+    output_dir = '../output/MC'
     output_file = output_dir+'/data_preparation.root'
-    tree_name = 'O2clsttableextra'
+    tree_name = 'O2clsttablemcext'
     folder_name = 'DF_*'
 
-    data_preparation(input_files, output_file, cfg_data_file, cfg_output_file, tree_name=tree_name, folder_name=folder_name)
+    data_preparation(input_files, output_file, cfg_data_file, cfg_output_file, tree_name=tree_name, folder_name=folder_name, force_option='AO2D', is_mc=True)
 
