@@ -1,2 +1,4 @@
 *.root
 *.pyc
+
+standalone_scripts/output.log
