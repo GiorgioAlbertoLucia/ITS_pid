@@ -1,1 +1,1 @@
-/data/galucia/its_pid/LHC22o_pass6_minBias_slice.root
+/data/galucia/its_pid/MC_LHC24f3/MC_LHC24f3.root

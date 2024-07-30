@@ -2,7 +2,7 @@
     "internal-dpl-clock": "",
     "internal-dpl-aod-reader": {
         "aod-file-private": "@input_data.txt",
-        "time-limit": "0",
+        "time-limit": "300",
         "orbit-offset-enumeration": "0",
         "orbit-multiplier-enumeration": "0",
         "start-value-enumeration": "0",
@@ -24,7 +24,7 @@
         "geoPath": "GLO\/Config\/GeometryAligned",
         "grpmagPath": "GLO\/Config\/GRPMagField",
         "mVtxPath": "GLO\/Calib\/MeanVertex",
-        "minPropagationDistance": "83.0999985",
+        "minPropagationDistance": "5",
         "useTrackTuner": "false",
         "fillTrackTunerTable": "false",
         "trackTunerParams": "debugInfo=0|updateTrackDCAs=1|updateTrackCovMat=1|updateCurvature=0|updateCurvatureIU=0|updatePulls=0|isInputFileFromCCDB=1|pathInputFile=Users\/m\/mfaggin\/test\/inputsTrackTuner\/PbPb2022|nameInputFile=trackTuner_DataLHC22sPass5_McLHC22l1b2_run529397.root|pathFileQoverPt=Users\/h\/hsharma\/qOverPtGraphs|nameFileQoverPt=D0sigma_Data_removal_itstps_MC_LHC22b1b.root|usePvRefitCorrections=0|qOverPtMC=-1.|qOverPtData=-1.",
@@ -35,37 +35,37 @@
                 "0.10000000149011612",
                 "0.20000000298023224",
                 "0.30000001192092896",
-                "0.40000000596046448",
+                "0.4000000059604645",
                 "0.5",
-                "0.60000002384185791",
-                "0.69999998807907104",
-                "0.80000001192092896",
-                "0.89999997615814209",
+                "0.6000000238418579",
+                "0.699999988079071",
+                "0.800000011920929",
+                "0.8999999761581421",
                 "1",
-                "1.1000000238418579",
+                "1.100000023841858",
                 "1.2000000476837158",
                 "1.2999999523162842",
-                "1.3999999761581421",
+                "1.399999976158142",
                 "1.5",
-                "1.6000000238418579",
+                "1.600000023841858",
                 "1.7000000476837158",
                 "1.7999999523162842",
-                "1.8999999761581421",
+                "1.899999976158142",
                 "2",
-                "2.2000000476837158",
+                "2.200000047683716",
                 "2.4000000953674316",
                 "2.5999999046325684",
-                "2.7999999523162842",
+                "2.799999952316284",
                 "3",
-                "3.2000000476837158",
+                "3.200000047683716",
                 "3.4000000953674316",
                 "3.5999999046325684",
-                "3.7999999523162842",
+                "3.799999952316284",
                 "4",
-                "4.4000000953674316",
-                "4.8000001907348633",
-                "5.1999998092651367",
-                "5.5999999046325684",
+                "4.400000095367432",
+                "4.800000190734863",
+                "5.199999809265137",
+                "5.599999904632568",
                 "6",
                 "6.5",
                 "7",
@@ -108,7 +108,7 @@
         "syst": "pp",
         "muonSelection": "0",
         "maxDiffZvtxFT0vsPV": "1",
-        "isMC": "false",
+        "isMC": "true",
         "TimeIntervalForOccupancyCalculationMin": "-40",
         "TimeIntervalForOccupancyCalculationMax": "100",
         "TimeBinsForOccupancyCalculation": {
@@ -143,7 +143,7 @@
         "produceTable": "-1",
         "produceFBextendedTable": "-1",
         "compatibilityIU": "false",
-        "itsMatching": "0",
+        "itsMatching": "1",
         "dcaSetup": "0",
         "ptMin": "0.100000001",
         "ptMax": "1e+10",
@@ -151,8 +151,8 @@
         "etaMax": "0.800000012"
     },
     "pid-multiplicity": {
-        "processIU": "false",
-        "processStandard": "true"
+        "processIU": "true",
+        "processStandard": "false"
     },
     "tpc-pid": {
         "param-file": "",
@@ -162,7 +162,7 @@
         "ccdb-timestamp": "0",
         "useNetworkCorrection": "false",
         "autofetchNetworks": "true",
-        "skipTPCOnly": "false",
+        "skipTPCOnly": "true",
         "networkPathLocally": "network.onnx",
         "networkPathCCDB": "Analysis\/PID\/TPC\/ML",
         "enableNetworkOptimizations": "true",
@@ -334,9 +334,9 @@
         },
         "dcanegtopv": "0.100000001",
         "dcapostopv": "0.100000001",
-        "v0cospa": "0.995",
+        "v0cospa": "0.94999999999999996",
         "dcav0dau": "1",
-        "v0radius": "0.899999976",
+        "v0radius": "0.200000003",
         "tpcrefit": "0",
         "minimumPt": "0",
         "maximumPt": "1000",
@@ -484,37 +484,37 @@
                     "0.10000000149011612",
                     "0.20000000298023224",
                     "0.30000001192092896",
-                    "0.40000000596046448",
+                    "0.4000000059604645",
                     "0.5",
-                    "0.60000002384185791",
-                    "0.69999998807907104",
-                    "0.80000001192092896",
-                    "0.89999997615814209",
+                    "0.6000000238418579",
+                    "0.699999988079071",
+                    "0.800000011920929",
+                    "0.8999999761581421",
                     "1",
-                    "1.1000000238418579",
-                    "1.200000047683716",
+                    "1.100000023841858",
+                    "1.2000000476837158",
                     "1.2999999523162842",
-                    "1.3999999761581421",
+                    "1.399999976158142",
                     "1.5",
-                    "1.6000000238418579",
-                    "1.700000047683716",
+                    "1.600000023841858",
+                    "1.7000000476837158",
                     "1.7999999523162842",
-                    "1.8999999761581421",
+                    "1.899999976158142",
                     "2",
-                    "2.2000000476837158",
-                    "2.4000000953674321",
+                    "2.200000047683716",
+                    "2.4000000953674316",
                     "2.5999999046325684",
-                    "2.7999999523162842",
+                    "2.799999952316284",
                     "3",
-                    "3.2000000476837158",
-                    "3.4000000953674321",
+                    "3.200000047683716",
+                    "3.4000000953674316",
                     "3.5999999046325684",
-                    "3.7999999523162842",
+                    "3.799999952316284",
                     "4",
-                    "4.4000000953674316",
-                    "4.8000001907348633",
-                    "5.1999998092651367",
-                    "5.5999999046325684",
+                    "4.400000095367432",
+                    "4.800000190734863",
+                    "5.199999809265137",
+                    "5.599999904632568",
                     "6",
                     "6.5",
                     "7",
@@ -609,8 +609,8 @@
         "enableTimeDependentResponse": "false",
         "fatalOnPassNotAvailable": "true",
         "processRun2": "false",
-        "processNoFT0": "true",
-        "processFT0": "false",
+        "processNoFT0": "false",
+        "processFT0": "true",
         "processOnlyFT0": "false"
     },
     "tof-pid": {
@@ -700,31 +700,31 @@
             ],
             "values": [
                 [
-                    "1"
+                    "-1"
                 ],
                 [
-                    "1"
+                    "-1"
                 ],
                 [
-                    "1"
+                    "-1"
                 ],
                 [
-                    "1"
+                    "-1"
                 ],
                 [
-                    "1"
+                    "-1"
                 ],
                 [
-                    "1"
+                    "-1"
                 ],
                 [
-                    "1"
+                    "-1"
                 ],
                 [
-                    "1"
+                    "-1"
                 ],
                 [
-                    "1"
+                    "-1"
                 ]
             ]
         },
@@ -740,7 +740,7 @@
         "smallTable": "false",
         "cfgMaterialCorrection": "0",
         "zVtxMax": "10",
-        "downscaleFactor": "1",
+        "downscaleFactor": "0.100000001",
         "applyAdditionalEvSel": "false",
         "v0track_NclsItsMin": "0",
         "v0track_NclsTpcMin": "100",
@@ -756,9 +756,12 @@
         "v0setting_massWindowLambda": "0.0599999987",
         "v0setting_massWindowK0s": "0.00999999978",
         "v0setting_nsigmaTPCEl": "1",
+        "v0setting_nsigmaTPCPi": "2",
+        "v0setting_nsigmaTPCPr": "2",
         "lambdasetting_qtAPcut": "0.0199999996",
+        "lambdasetting_pmin": "0",
         "casc_setting_dcaV0daughters": "0.100000001",
-        "casc_setting_cosPA": "0.99000001",
+        "casc_setting_cosPA": "0.999899983",
         "casc_setting_massWindowOmega": "0.0199999996",
         "casc_setting_massWindowXi": "0.00999999978",
         "casc_setting_nsigmaTPC": "3",
@@ -785,27 +788,27 @@
             ],
             "values": [
                 [
-                    "-136.71",
+                    "-136.71000000000001",
                     "0.441",
-                    "0.2269",
+                    "0.22689999999999999",
                     "1.347",
-                    "0.8035",
-                    "0.09"
+                    "0.80349999999999999",
+                    "0.089999999999999997"
                 ],
                 [
-                    "-321.34",
-                    "0.6539",
+                    "-321.33999999999997",
+                    "0.65390000000000004",
                     "1.591",
-                    "0.8225",
+                    "0.82250000000000001",
                     "2.363",
-                    "0.09"
+                    "0.089999999999999997"
                 ]
             ]
         },
-        "processDataV0Casc": "true",
-        "processDataNuclei": "true",
-        "processMcV0Casc": "false",
-        "processMcNuclei": "false"
+        "processDataV0Casc": "false",
+        "processDataNuclei": "false",
+        "processMcV0Casc": "true",
+        "processMcNuclei": "true"
     },
     "lambdakzero-v0-data-link-builder": {
         "processFound": "true",

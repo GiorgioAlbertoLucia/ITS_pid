@@ -1,12 +1,9 @@
 { "OutputDirector": {
     "debug_mode": true,
-    "resfile": "AO2D",
+    "resfile": "AO2D_MC_LHC24f3",
     "OutputDescriptors": [
       {
-        "table": "AOD/CLSTTABLE/0"
-      },
-      {
-        "table": "AOD/CLSTTABLEEXTRA/0"
+        "table": "AOD/CLSTTABLEMCEXT/0"
       }
     ],
     "ntfmerge": 1
