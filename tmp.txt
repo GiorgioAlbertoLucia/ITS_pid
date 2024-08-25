@@ -1,0 +1,3 @@
+- cl size bethe bloch for data and mc in a region of eta (eta abs < 0.5) and phi ()
+- cl size in dati e mc plottate in una slice di momento per vedere se la shape cambi a occhio
+- USARE DATI NUOVI

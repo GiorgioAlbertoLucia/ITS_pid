@@ -3,6 +3,7 @@
 '''
 
 import numpy as np
+import ctypes
 from abc import ABC, abstractmethod
 
 from ROOT import TH1F, TH2F
@@ -124,11 +125,18 @@ class PLHistHandler(HistHandler):
     def buildTH1(self, xVariable: str, axisSpecX: AxisSpec) -> TH1F:
         hist = THist([axisSpecX]).hist
         for x in self.inData[xVariable]:    hist.Fill(x)
-        for ibin in range(1, hist.GetNbinsX() + 1):    hist.SetBinError(ibin, np.sqrt(hist.GetBinContent(ibin)))
+        #xs = self.inData[xVariable].to_numpy().ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        #ws = np.ones(self.inData[xVariable].shape[0]).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        #hist.FillN(self.inData[xVariable].shape[0], xs, ws)
+        #for ibin in range(1, hist.GetNbinsX() + 1):    hist.SetBinError(ibin, np.sqrt(hist.GetBinContent(ibin)))
         return hist
     
     def buildTH2(self, xVariable: str, yVariable: str, axisSpecX: AxisSpec, axisSpecY: AxisSpec) -> TH1F:
         hist = THist([axisSpecX, axisSpecY]).hist
+        #xs = self.inData[xVariable].to_numpy().ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        #ys = self.inData[yVariable].to_numpy().ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        #ws = np.ones(self.inData[xVariable].shape[0]).ctypes.data_as(ctypes.POINTER(ctypes.c_double))   
+        #hist.FillN(self.inData[xVariable].shape[0], xs, ys, ws)
         for x, y in zip(self.inData[xVariable], self.inData[yVariable]):    hist.Fill(x, y)
         return hist
 

@@ -8,3 +8,7 @@ class AxisSpec:
     xmax: float
     name: str = ''
     title: str = ''
+
+    @classmethod
+    def from_dict(cls, d: dict):
+        return cls(d['nbins'], d['xmin'], d['xmax'], d['name'], d['title'])

@@ -1,0 +1,103 @@
+all_species: ['Unidentified', 'El', 'Pi', 'Ka', 'Pr', 'De', 'He']
+train_species: ['Pi', 'Ka', 'Pr', 'De', 'He']
+features: [ 'fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fItsClusterSizeL3', 'fItsClusterSizeL4', 'fItsClusterSizeL5', 'fItsClusterSizeL6', 
+            'fEta', 'fPhi', 'fCosL', 'fPAbs', 
+            'fMeanItsClSize', 'fClSizeCosL'
+            ]
+target: 'fBetaAbs'
+
+load_from_optuna: True
+optuna_hyperparameters_path: '/home/galucia/ITS_pid/models/bdt_beta_he_optuna.pkl'
+hyperparameters:
+  max_depth: 15
+  learning_rate: 0.005
+  n_estimators: 3000
+  tree_method: 'gpu_hist'
+  #eval_metric: 'rmse'
+  booster: gbtree
+  gamma: 0
+  min_child_weight: 9
+  subsample: 0.8
+  colsample_bytree: 0.9
+  reg_alpha: 0.5
+  reg_lambda: 0.5
+  n_jobs: 20
+  #device: 'cuda'
+  random_state: 42
+
+kwargs_fit:
+  early_stopping_rounds: 10
+
+#model_path: '/home/galucia/ITS_pid/models/bdt_beta.pkl'
+model_path: '/home/galucia/ITS_pid/models/bdt_beta_he.pkl'
+output_file_train: '/home/galucia/ITS_pid/output/bdt_beta_train.parquet'
+output_file_test: '/home/galucia/ITS_pid/output/bdt_beta_test.parquet'
+
+# plots
+betaml_plot: {
+  axisSpecX: {
+    nbins: 1000,
+    xmin: -5,
+    xmax: 5,
+    name: 'beta_ml',
+    title: '#beta_{ML}; #it{p} (GeV/#it{c}); #beta_{ML}',
+    },
+  axisSpecY: {
+    nbins: 500,
+    xmin: 0,
+    xmax: 1,
+    name: 'beta_ml',
+    title: '#beta_{ML}; #it{p} (GeV/#it{c}); #beta_{ML}',
+    }
+  }
+
+beta_plot: {
+  axisSpecX: {
+    nbins: 1000,
+    xmin: 0,
+    xmax: 5,
+    name: 'beta',
+    title: '#beta; #it{p} (GeV/#it{c}); #beta',
+    },
+  axisSpecY: {
+    nbins: 500,
+    xmin: 0,
+    xmax: 1,
+    name: 'beta',
+    title: '#beta; #it{p} (GeV/#it{c}); #beta',
+    }
+  }
+
+delta_beta_plot: {
+  axisSpecX: {
+    nbins: 1000,
+    xmin: -5,
+    xmax: 5,
+    name: 'delta_beta',
+    title: '#Delta #beta; #it{p} (GeV/#it{c}); #Delta #beta',
+    },
+  axisSpecY: {
+    nbins: 500,
+    xmin: -0.5,
+    xmax: 0.5,
+    name: 'delta_beta',
+    title: '#Delta #beta; #it{p} (GeV/#it{c}); #Delta#beta',
+    }
+  }
+
+part_id_plot: {
+  axisSpecX: {
+    nbins: 200,
+    xmin: -5,
+    xmax: 5,
+    name: 'part_id',
+    title: 'Particle ID; #it{p} (GeV/#it{c}); Particle ID',
+    },
+  axisSpecY: {
+    nbins: 8,
+    xmin: -0.5,
+    xmax: 7.5,
+    name: 'part_id',
+    title: 'Particle ID; #it{p} (GeV/#it{c}); Particle ID',
+    }
+  }

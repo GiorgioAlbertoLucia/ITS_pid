@@ -3,10 +3,10 @@
 #
 
 # enabling configuration
-visualize: False
+visualize: True
 
 # Particle species
-species: ['El',
+species: [ 'Unidentified', 'El',
           'Pi', 'Ka', 'Pr', 
           'De', 'He'
           ]
@@ -33,9 +33,11 @@ oneHot: False
 useClasses: True
 oversample: True
 
-num_epochs: 20
-learning_rate: 0.001
+num_threads: 1
+num_epochs: 50
+learning_rate: 0.01
 batch_size: 32
 test_size: 0.2
+validation_size: 0.05
 
 # data preparation 

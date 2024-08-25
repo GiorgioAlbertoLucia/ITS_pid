@@ -1,0 +1,464 @@
+#
+# Configuration file for plots
+#
+
+outPath: clsize_vs_p.root
+
+plots:
+  [
+    # 1 - All particles
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0,
+            xmax: 5.1,
+            name: 'clsize_vs_p',
+            title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 12,
+            name: 'clsize_vs_p',
+            title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'clsize_vs_p',
+          title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_new.root,
+            graphName: 'clsize_vs_p_Pi/clSizeCosL_vs_p_Pi_sig_points',
+            graphLabel: '#pi #leftarrow #Lambda',
+            kwargs: {
+                      line_color: 629,  # kRed-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 629,  # kRed-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_new.root,
+            graphName: 'clsize_vs_p_Ka/clSizeCosL_vs_p_Ka_sig_points',
+            graphLabel: 'K #leftarrow #Omega',
+            kwargs: {
+                      line_color: 800,  # kOrange
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 800,  # kOrange
+                      marker_style: 21,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_new.root,
+            graphName: 'clsize_vs_p_Pr/clSizeCosL_vs_p_Pr_sig_points',
+            graphLabel: 'p #leftarrow #Lambda',
+            kwargs: {
+                      line_color: 434,  # kCyan+2
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 434,  # kCyan+2
+                      marker_style: 22,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/cluster_size_cascade.root',
+            graphName: 'mean_xi_pos_vs_p',
+            graphLabel: '#Xi',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 23,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/cluster_size_cascade.root',
+            graphName: 'mean_omega_pos_vs_p',
+            graphLabel: '#Omega',
+            kwargs: {
+                      line_color: 597,  # kBlue-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 597,  # kBlue-3
+                      marker_style: 24,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_new.root',
+            graphName: 'clsize_vs_p_De/clSizeCosL_vs_p_De_sig_points',
+            graphLabel: 'd',
+            kwargs: {
+                      line_color: 835,  # kTeal-5
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 835,  # kTeal-5
+                      marker_style: 25,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC23_pass4_skimmed/bethe_bloch_parametrisation.root',
+            graphName: 'clsize_vs_p_He/clSizeCosL_vs_p_He_sig_points',
+            graphLabel: '^{3}He',
+            kwargs: {
+                      line_color: 877,  # kViolet-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 877,  # kViolet-3
+                      marker_style: 26,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.6,
+          xmax: 0.89,
+          ymin: 0.65,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 2,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  clsize_vs_p.pdf
+    },
+    
+    # 2 - He (and fake match)
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 1.5,
+            xmax: 5,
+            name: 'clsize_vs_p_he',
+            title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 15,
+            name: 'clsize_vs_p_he',
+            title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          dummy: True # dummy flag
+        },
+      multigraph:
+        {
+          name: 'clsize_vs_p_he',
+          title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC23_pass4_skimmed/bethe_bloch_parametrisation.root',
+            graphName: 'clsize_vs_p_He/clSizeCosL_vs_p_He_sig_points',
+            graphLabel: '^{3}He',
+            kwargs: {
+                      line_color: 800,  # kOrange
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 800,  # kOrange
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC23_pass4_skimmed/bethe_bloch_parametrisation.root',
+            graphName: 'clsize_vs_p_He/clSizeCosL_vs_p_He_fm_points',
+            graphLabel: 'Fake match',
+            kwargs: {
+                      line_color: 434,    # kCyan-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 434,    # kCyan-3
+                      marker_style: 21,
+                      marker_size: 1,
+                      draw_option: 'same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.6,
+          xmax: 0.89,
+          ymin: 0.7,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  clsize_vs_p_he_fakematch.pdf
+    },
+
+    # 3 - He cluster size
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 1,
+            xmax: 5,
+            name: 'clsize_vs_p_he_th2',
+            title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 15,
+            name: 'clsize_vs_p_he_th2',
+            title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          logz: True,
+          right_margin: 0.15,
+        },
+      hists:
+        [
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC23_pass4_skimmed/bethe_bloch_parametrisation.root',
+            histName: 'clsize_vs_p_He/h2_BB_He',
+            histLabel: '^{3}He',
+            kwargs: {
+                      palette: 57,
+                      draw_option: 'colz same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 0,
+          xmin: 0.7,
+          xmax: 0.89,
+          ymin: 0.8,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 2,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: '',
+                  }
+        },
+      outPDF:  clsize_vs_p_he_th2.pdf
+    },
+    # 3 - He cluster size
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0,
+            xmax: 5,
+            name: 'clSizeCosL_vs_p_all',
+            title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 15,
+            name: 'clSizeCosL_vs_p_all',
+            title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          logz: True,
+          right_margin: 0.15,
+        },
+      hists:
+        [
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/data_preparation.root',
+            histName: 'all/clSizeCosL_vs_p',
+            histLabel: '',
+            kwargs: {
+                      palette: 57,
+                      draw_option: 'colz same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 0,
+          xmin: 0.7,
+          xmax: 0.89,
+          ymin: 0.8,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 2,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: '',
+                  }
+        },
+      outPDF:  clsize_vs_p_all.pdf
+    },
+
+    # 4 - All particles Pr, Ka, Pi
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0,
+            xmax: 5.1,
+            name: 'clsize_vs_p_pkpi',
+            title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 12,
+            name: 'clsize_vs_p_pkpi',
+            title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'clsize_vs_p_pkpi',
+          title: '; #it{p} (GeV/#it{c}); #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_pkpi.root,
+            graphName: 'clsize_vs_p_Pi/clSizeCosL_vs_p_Pi_sig_points',
+            graphLabel: '#pi (TPC)',
+            kwargs: {
+                      line_color: 629,  # kRed-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 629,  # kRed-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_pkpi.root,
+            graphName: 'clsize_vs_p_Ka/clSizeCosL_vs_p_Ka_sig_points',
+            graphLabel: 'K (TPC)',
+            kwargs: {
+                      line_color: 800,  # kOrange
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 800,  # kOrange
+                      marker_style: 21,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_pkpi.root,
+            graphName: 'clsize_vs_p_Pr/clSizeCosL_vs_p_Pr_sig_points',
+            graphLabel: 'p (TPC)',
+            kwargs: {
+                      line_color: 434,  # kCyan+2
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 434,  # kCyan+2
+                      marker_style: 22,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.6,
+          xmax: 0.89,
+          ymin: 0.15,
+          ymax: 0.34,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 2,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  clsize_vs_p_pkpi.pdf
+    },
+  ]

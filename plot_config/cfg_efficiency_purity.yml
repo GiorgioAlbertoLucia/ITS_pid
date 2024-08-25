@@ -1,0 +1,103 @@
+outPath: efficiency_purity_Pr.root
+
+plots:
+  [
+    # 1 - All particles
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.,
+            xmax: 5.1,
+            name: 'efficiency_purity',
+            title: '; #beta#gamma; ',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 1.2,
+            name: 'efficiency_purity',
+            title: '; #beta#gamma; ',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'clsize_vs_betagamma',
+          title: '; #beta#gamma; ',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/purity.root,
+            graphName: 'efficiency_Pr',
+            graphLabel: 'efficiency p',
+            kwargs: {
+                      line_color: 629,  # kRed-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 629,  # kRed-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/purity.root,
+            graphName: 'purity_Pr_vs_Ka',
+            graphLabel: 'purity p vs K',
+            kwargs: {
+                      line_color: 800,  # kOrange
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 800,  # kOrange
+                      marker_style: 21,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/purity.root,
+            graphName: 'purity_Pr_vs_Pi',
+            graphLabel: 'purity p vs #pi',
+            kwargs: {
+                      line_color: 434,  # kCyan+2
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 434,  # kCyan+2
+                      marker_style: 22,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.6,
+          xmax: 0.89,
+          ymin: 0.14,
+          ymax: 0.3,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  efficiency_purity_Pr.pdf
+    },
+  ]

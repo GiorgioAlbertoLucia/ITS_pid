@@ -1,4 +1,10 @@
 *.root
 *.pyc
+*.log
+*.pdf
+*.pkl
+*.parquet
+*.csv
+*.pth
 
 standalone_scripts/output.log

@@ -19,7 +19,7 @@ sys.path.append('..')
 from framework.src.axis_spec import AxisSpec
 from framework.src.hist_handler import HistHandler
 from core.dataset import DataHandler
-from framework.utils.matplotlib_to_root import saveMatplotlibToRootFile
+from framework.utils.matplotlib_to_root import save_mpl_to_root
 
 
 class NeuralNetworkTester:
@@ -121,10 +121,13 @@ class NeuralNetworkTester:
         conf_matrix = []
         for itrue_species in range(self.data_handler.num_particles):
             row = []
-            ispecies_tot = self.data_handler.dataset.filter(pl.col('partID') == itrue_species).shape[0]
+            ispecies_tot = self.data_handler.dataset.filter(pl.col('fPartID') == itrue_species).shape[0]
             for ipred_species in range(self.data_handler.num_particles):
-                ipred_pos = self.data_handler.dataset.filter((pl.col('partID') == itrue_species) & (pl.col('prediction') == ipred_species)).shape[0]
-                row.append(ipred_pos/ispecies_tot)
+                ipred_pos = self.data_handler.dataset.filter((pl.col('fPartID') == itrue_species) & (pl.col('prediction') == ipred_species)).shape[0]
+                if ispecies_tot != 0:
+                    row.append(ipred_pos/ispecies_tot)
+                else:
+                    row.append(0)
             conf_matrix.append(row)
 
         conf_matrix = np.array(conf_matrix)
@@ -134,9 +137,9 @@ class NeuralNetworkTester:
         sns.heatmap(conf_matrix, annot=True, cmap='Blues', fmt='.2f')
         ax.set_xlabel('Predicted')
         ax.set_ylabel('True')
-        ax.set_xtitle('Confusion Matrix')
+        ax.set_title('Confusion Matrix')
 
-        saveMatplotlibToRootFile(fig, output_file, 'confusion_matrix')
+        save_mpl_to_root(fig, output_file, 'confusion_matrix')
 
 
     def class_separation(self, ispecies:int, species:str,  output_file:TFile):
@@ -145,12 +148,12 @@ class NeuralNetworkTester:
         '''
         assert 'prediction' in self.data_handler.dataset.columns, 'No predictions found in the dataset. Run make_predictions() first'
 
-        print(self.data_handler.dataset.describe())
+        print(self.data_handler.dataset[[f'pred_class{iclass}' for iclass in range(self.data_handler.num_particles)]].describe())
         pos_axis_spec = AxisSpec(44, 0, 1.1, f'pos_pred_class_{ispecies}', f'{species}: prediction for class {ispecies}; probability; counts')
         neg_axis_spec = AxisSpec(44, 0, 1.1, f'neg_pred_class_{ispecies}', f'all: prediction for class {ispecies}; probability; counts')
         
-        pos_dataset = self.data_handler.dataset.filter((pl.col('partID') == ispecies))
-        neg_dataset = self.data_handler.dataset.filter((pl.col('partID') != ispecies))
+        pos_dataset = self.data_handler.dataset.filter((pl.col('fPartID') == ispecies))
+        neg_dataset = self.data_handler.dataset.filter((pl.col('fPartID') != ispecies))
 
         pos_handler = HistHandler.createInstance(pos_dataset)
         pos_hist = pos_handler.buildTH1(f'pred_class{ispecies}', pos_axis_spec)
@@ -161,8 +164,8 @@ class NeuralNetworkTester:
         neg_hist.SetFillColorAlpha(867, 0.5)
 
         canvas = TCanvas(f'{species}_vs_all', f'{species} vs all; probability; counts', 800, 600)
-        pos_hist.Draw('hist')
-        neg_hist.Draw('hist same')
+        pos_hist.Draw('hist f')
+        neg_hist.Draw('hist f same')
         output_file.cd()
         canvas.BuildLegend(0.55, 0.6, 0.9, 0.9)
         canvas.SetLogy()
@@ -178,8 +181,8 @@ class NeuralNetworkTester:
         pos_axis_spec = AxisSpec(44, 0, 1.1, f'pos_pred_class_{ispecies}', f'{species}: prediction for class {ispecies}; probability; counts')
         neg_axis_spec = AxisSpec(44, 0, 1.1, f'neg_pred_class_{ispecies}', f'all: prediction for class {ispecies}; probability; counts')
         
-        pos_dataset = self.data_handler.dataset.filter((pl.col('partID') == ispecies))
-        neg_dataset = self.data_handler.dataset.filter((pl.col('partID') != ispecies))
+        pos_dataset = self.data_handler.dataset.filter((pl.col('fPartID') == ispecies))
+        neg_dataset = self.data_handler.dataset.filter((pl.col('fPartID') != ispecies))
 
         pos_handler = HistHandler.createInstance(pos_dataset)
         pos_hist = pos_handler.buildTH1(f'prediction', pos_axis_spec)

@@ -1,0 +1,666 @@
+#
+# Configuration file for plots
+#
+
+outPath: clsize_vs_betagamma.root
+
+plots:
+  [
+    # 1 - All particles
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.,
+            xmax: 5,
+            name: 'clsize_vs_betagamma',
+            title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 12,
+            name: 'clsize_vs_betagamma',
+            title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'clsize_vs_betagamma',
+          title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_new.root,
+            graphName: 'clsize_vs_betagamma_Pi/clSizeCosL_vs_beta_Pi_sig_points',
+            graphLabel: '#pi #leftarrow #Lambda',
+            kwargs: {
+                      line_color: 629,  # kRed-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 629,  # kRed-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_new.root,
+            graphName: 'clsize_vs_betagamma_Ka/clSizeCosL_vs_beta_Ka_sig_points',
+            graphLabel: 'K #leftarrow #Omega',
+            kwargs: {
+                      line_color: 800,  # kOrange
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 800,  # kOrange
+                      marker_style: 21,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_new.root,
+            graphName: 'clsize_vs_betagamma_Pr/clSizeCosL_vs_beta_Pr_sig_points',
+            graphLabel: 'p #leftarrow #Lambda',
+            kwargs: {
+                      line_color: 434,  # kCyan+2
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 434,  # kCyan+2
+                      marker_style: 22,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/cluster_size_cascade.root',
+            graphName: 'mean_xi_pos',
+            graphLabel: '#Xi',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 23,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/cluster_size_cascade.root',
+            graphName: 'mean_omega_pos',
+            graphLabel: '#Omega',
+            kwargs: {
+                      line_color: 597,  # kBlue-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 597,  # kBlue-3
+                      marker_style: 24,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_new.root',
+            graphName: 'clsize_vs_betagamma_De/clSizeCosL_vs_beta_De_sig_points',
+            graphLabel: 'd',
+            kwargs: {
+                      line_color: 835,  # kTeal-5
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 835,  # kTeal-5
+                      marker_style: 25,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC23_pass4_skimmed/bethe_bloch_parametrisation.root',
+            graphName: 'clsize_vs_betagamma_He/clSizeCosL_vs_beta_He_sig_points',
+            graphLabel: '^{3}He',
+            kwargs: {
+                      line_color: 877,  # kViolet-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 877,  # kViolet-3
+                      marker_style: 26,
+                      marker_size: 1,
+                      draw_option: 'p same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_band.root',
+            graphName: 'pr_band',
+            graphLabel: '1#sigma band p',
+            kwargs: {
+                      fill_color: 622,  # kRed-10
+                      fill_alpha: 0.5,
+                      fill_style: 3013,
+                      line_color: 622,  # kRed-10
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 622,  # kRed-10
+                      marker_style: 26,
+                      marker_size: 1,
+                      draw_option: 'f same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_band.root',
+            graphName: 'pr_low_band',
+            graphLabel: '',
+            kwargs: {
+                      line_color: 622,  # kRed-10
+                      line_width: 2,
+                      line_style: 1,
+                      marker_color: 622,  # kRed-10
+                      marker_style: 26,
+                      marker_size: 1,
+                      draw_option: 'l same',
+                      leg_add: False,
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_band.root',
+            graphName: 'pr_high_band',
+            graphLabel: '',
+            kwargs: {
+                      line_color: 622,  # kRed-10
+                      line_width: 2,
+                      line_style: 1,
+                      marker_color: 622,  # kRed-10
+                      marker_style: 26,
+                      marker_size: 1,
+                      draw_option: 'l same',
+                      leg_add: False,
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.5,
+          xmax: 0.89,
+          ymin: 0.6,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 2,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  clsize_vs_betagamma.pdf
+    },
+    
+    # 2 - He (and fake match)
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.3,
+            xmax: 2.7,
+            name: 'clsize_vs_betagamma_he',
+            title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 12,
+            name: 'clsize_vs_betagamma_he',
+            title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          dummy: True # dummy flag
+        },
+      multigraph:
+        {
+          name: 'clsize_vs_betagamma_he',
+          title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC23_pass4_skimmed/bethe_bloch_parametrisation.root',
+            graphName: 'clsize_vs_betagamma_He/clSizeCosL_vs_beta_He_sig_points',
+            graphLabel: '^{3}He',
+            kwargs: {
+                      line_color: 800,  # kOrange
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 800,  # kOrange
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'p',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC23_pass4_skimmed/bethe_bloch_parametrisation.root',
+            graphName: 'clsize_vs_betagamma_He/clSizeCosL_vs_beta_He_fm_points',
+            graphLabel: 'Fake match',
+            kwargs: {
+                      line_color: 434,    # kCyan-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 434,    # kCyan-3
+                      marker_style: 21,
+                      marker_size: 1,
+                      draw_option: 'p',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.6,
+          xmax: 0.89,
+          ymin: 0.7,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  clsize_vs_betagamma_he_fakematch.pdf
+    },
+
+    # 3 - He cluster size
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.1,
+            xmax: 5,
+            name: 'clsize_vs_betagamma_he_th2',
+            title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 15,
+            name: 'clsize_vs_betagamma_he_th2',
+            title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          logz: True,
+          right_margin: 0.15,
+        },
+      hists:
+        [
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC23_pass4_skimmed/bethe_bloch_parametrisation.root',
+            histName: 'clsize_vs_betagamma_He/h2_BB_He',
+            histLabel: '^{3}He',
+            kwargs: {
+                      palette: 57,
+                      draw_option: 'colz same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 0,
+          xmin: 0.7,
+          xmax: 0.89,
+          ymin: 0.8,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 2,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: '',
+                  }
+        },
+      outPDF:  clsize_vs_betagamma_he_th2.pdf
+    },
+
+    # 4 - Pr (and fake match)
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.3,
+            xmax: 2.,
+            name: 'clsize_vs_betagamma_pr',
+            title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 12,
+            name: 'clsize_vs_betagamma_pr',
+            title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          dummy: True # dummy flag
+        },
+      multigraph:
+        {
+          name: 'clsize_vs_betagamma_pr',
+          title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_olddata2_fm.root',
+            graphName: 'clsize_vs_betagamma_Pr/clSizeCosL_vs_beta_Pr_sig_points',
+            graphLabel: 'p',
+            kwargs: {
+                      line_color: 800,  # kOrange
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 800,  # kOrange
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'p',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_olddata2_fm.root',
+            graphName: 'clsize_vs_betagamma_Pr/clSizeCosL_vs_beta_Pr_fm_points',
+            graphLabel: 'Fake match',
+            kwargs: {
+                      line_color: 434,    # kCyan-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 434,    # kCyan-3
+                      marker_style: 21,
+                      marker_size: 1,
+                      draw_option: 'p',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.6,
+          xmax: 0.89,
+          ymin: 0.7,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'p',
+                  }
+        },
+      outPDF:  clsize_vs_betagamma_pr_fakematch.pdf
+    },
+
+    # 5 - Pr cluster size
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.1,
+            xmax: 5,
+            name: 'clsize_vs_betagamma_pr_th2',
+            title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 15,
+            name: 'clsize_vs_betagamma_pr_th2',
+            title: '; #beta#gamma; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          logz: True,
+          right_margin: 0.15,
+        },
+      hists:
+        [
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation.root',
+            histName: 'clsize_vs_betagamma_Pr/h2_BB_Pr',
+            histLabel: '',
+            kwargs: {
+                      palette: 57,
+                      draw_option: 'colz same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 0,
+          xmin: 0.7,
+          xmax: 0.89,
+          ymin: 0.8,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 2,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: '',
+                  }
+        },
+      outPDF:  clsize_vs_betagamma_pr_th2.pdf
+    },
+
+    # 6 - Pr fake match probability
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.36,
+            xmax: 0.74,
+            name: 'fake_match_probability_pr',
+            title: '; #beta#gamma; Fake match probability',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.08,
+            xmax: 0.72,
+            name: 'fake_match_probability_pr',
+            title: '; #beta#gamma; Fake match probability',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag,
+          left_margin: 0.15,
+        },
+      multigraph:
+        {
+          name: 'fake_match_probability_pr',
+          title: '; #beta#gamma; Fake match probability',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_olddata2_fm.root',
+            graphName: 'clsize_vs_betagamma_Pr/clSizeCosL_vs_beta_Pr_fm_prob_points',
+            graphLabel: '',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 797,  # kOrange-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'p',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 0,
+          xmin: 0.6,
+          xmax: 0.89,
+          ymin: 0.7,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'p',
+                  }
+        },
+      outPDF:  cl_size_vs_betagamma_fake_match_probability.pdf
+    },
+
+    # 7 - Pr cluster size fit
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0,
+            xmax: 15,
+            name: 'clsize_slice_fit_Pr',
+            title: '; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 37000,
+            name: 'clsize_slice_fit_Pr',
+            title: '; #LT ITS Cluster Size #GT #times #LT cos#lambda #GT; Counts',
+          },
+        ],
+      canvas:
+        {
+          left_margin: 0.15,
+        },
+      hists:
+        [
+          {
+            inPath: '/home/galucia/ITS_pid/output/fit_slice_Pr.root',
+            histName: 'h1',
+            histLabel: '',
+            kwargs: {
+                      fill_color: 422, # kCyan-10
+                      fill_style: 3013,
+                      leg_add: False,
+                      draw_option: 'hist same',
+                    }
+          },
+        ],
+      funcs:
+        [
+          {
+            inPath: '/home/galucia/ITS_pid/output/fit_slice_Pr.root',
+            funcName: 'sig',
+            funcLabel: 'protons',
+            kwargs: {
+                      line_color: 800,  # kOrange
+                      line_width: 2,
+                      leg_add: True,
+                      draw_option: 'l same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/fit_slice_Pr.root',
+            funcName: 'fm',
+            funcLabel: 'fake matches',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 2,
+                      leg_add: True,
+                      draw_option: 'l same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/fit_slice_Pr.root',
+            funcName: 'fit',
+            funcLabel: 'protons + fake matches',
+            kwargs: {
+                      line_color: 596,  # kBlue-4
+                      line_width: 2,
+                      leg_add: True,
+                      draw_option: 'l same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.6,
+          xmax: 0.89,
+          ymin: 0.6,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 500,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: '',
+                  }
+        },
+      outPDF:  clsize_slice_fit_Pr.pdf
+    },
+  ]

@@ -3,6 +3,7 @@
 '''
 
 ParticleMasses = {
+    'Unidentified': 0.,
     'El':   0.0005109989461,
     'Pi':   0.13957018,
     'Ka':   0.493677,
@@ -12,6 +13,7 @@ ParticleMasses = {
 }
 
 ParticlePDG = {
+    'Unidentified': 0,
     'El': 11, 
     'Pi': 211, 
     'Ka': 321, 

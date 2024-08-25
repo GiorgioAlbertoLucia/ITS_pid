@@ -38,7 +38,7 @@ def obj_setter(obj, **kwargs):
         obj.SetFillColor(kwargs['fill_color'])
     if 'fill_style' in kwargs:
         obj.SetFillStyle(kwargs['fill_style'])
-    if 'fill_alpha' in kwargs:
-        obj.SetFillAlpha(kwargs['fill_alpha'])
+    if 'fill_alpha' in kwargs and 'fill_color' in kwargs:
+        obj.SetFillColorAlpha(kwargs['fill_color'], kwargs['fill_alpha'])
 
     return obj

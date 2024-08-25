@@ -5,7 +5,9 @@
 # output file path
 #outputFilePath: "/home/galucia/antiLithium4/analysis/output/data.root"
 #studiesOutputFilePath: "/home/galucia/antiLithium4/analysis/output/data_studies.root"
-outDirs: ["all", "El", "Pi", "Ka", "Pr", "De", "He"]
+outDirs: ["all", #"El", 
+          "Pi", "Ka", "Pr", #"De", "He"
+          ]
 
 fItsClusterSizeL0: {  name: "fItsClusterSizeL0",
             title: "Cluster size layer 0; Cluster size layer 0; Counts",
@@ -14,7 +16,9 @@ fItsClusterSizeL0: {  name: "fItsClusterSizeL0",
             xMin: 0,
             xMax: 15,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fItsClusterSizeL1: {  name: "fItsClusterSizeL1",
@@ -24,7 +28,9 @@ fItsClusterSizeL1: {  name: "fItsClusterSizeL1",
             xMin: 0,
             xMax: 15,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fItsClusterSizeL2: {  name: "fItsClusterSizeL2",
@@ -34,7 +40,9 @@ fItsClusterSizeL2: {  name: "fItsClusterSizeL2",
             xMin: 0,
             xMax: 15,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fItsClusterSizeL3: {  name: "fItsClusterSizeL3",
@@ -44,7 +52,9 @@ fItsClusterSizeL3: {  name: "fItsClusterSizeL3",
             xMin: 0,
             xMax: 15,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fItsClusterSizeL4: {  name: "fItsClusterSizeL4",
@@ -54,7 +64,9 @@ fItsClusterSizeL4: {  name: "fItsClusterSizeL4",
             xMin: 0,
             xMax: 15,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fItsClusterSizeL5: {  name: "fItsClusterSizeL5",
@@ -64,7 +76,9 @@ fItsClusterSizeL5: {  name: "fItsClusterSizeL5",
             xMin: 0,
             xMax: 15,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fItsClusterSizeL6: {  name: "fItsClusterSizeL6",
@@ -74,7 +88,9 @@ fItsClusterSizeL6: {  name: "fItsClusterSizeL6",
             xMin: 0,
             xMax: 15,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fMeanItsClSize: {  name: "fMeanItsClSize",
@@ -84,7 +100,9 @@ fMeanItsClSize: {  name: "fMeanItsClSize",
             xMin: 0,
             xMax: 15,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fClSizeCosL: {  name: "fClSizeCosL",
@@ -94,27 +112,33 @@ fClSizeCosL: {  name: "fClSizeCosL",
             xMin: 0,
             xMax: 15,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fP:        {  name: "fP",
             title: "#it{p} ; #it{p} (GeV/#it{c}); Counts",
             xVariable: "fP",
             nXBins: 200,
-            xMin: -1,
-            xMax: 1,
+            xMin: -5,
+            xMax: 5,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fPt:       {  name: "fPt",
             title: "#it{p}_{T} ; #it{p}_{T} (GeV/#it{c}); Counts",
             xVariable: "fPt",
             nXBins: 200,
-            xMin: -1,
-            xMax: 1,
+            xMin: -5,
+            xMax: 5,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             } 
 
 fPhi:      {  name: "fPhi",
@@ -124,7 +148,9 @@ fPhi:      {  name: "fPhi",
             xMin: 0,
             xMax: 6.283185307179586,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fEta:      {  name: "fEta",
@@ -134,7 +160,9 @@ fEta:      {  name: "fEta",
             xMin: -0.8,
             xMax: 0.8,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 fCosL:      {  name: "fCosL",
@@ -144,7 +172,9 @@ fCosL:      {  name: "fCosL",
             xMin: -1,
             xMax: 1,
             type: "TH1F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 #dEdx:     {  name: "dEdx",
@@ -154,7 +184,9 @@ fCosL:      {  name: "fCosL",
 #            xMin: 0,
 #            xMax: 600,
 #            type: "TH1F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }
 #
 #nSigmaAbsE: {  name: "nSigmaAbsE",
@@ -164,7 +196,9 @@ fCosL:      {  name: "fCosL",
 #            xMin: 0,
 #            xMax: 10,
 #            type: "TH1F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }
 #
 #nSigmaAbsPi: {  name: "nSigmaAbsPi",
@@ -174,7 +208,9 @@ fCosL:      {  name: "fCosL",
 #            xMin: 0,
 #            xMax: 10,
 #            type: "TH1F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }
 #
 #nSigmaAbsK: {  name: "nSigmaAbsK",
@@ -184,7 +220,9 @@ fCosL:      {  name: "fCosL",
 #            xMin: 0,
 #            xMax: 10,
 #            type: "TH1F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }
 #
 #nSigmaAbsP: {  name: "nSigmaAbsP",
@@ -194,7 +232,9 @@ fCosL:      {  name: "fCosL",
 #            xMin: 0,
 #            xMax: 10,
 #            type: "TH1F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }
 #
 #nSigmaAbsDeu: {  name: "nSigmaAbsDeu",
@@ -204,7 +244,9 @@ fCosL:      {  name: "fCosL",
 #            xMin: 0,
 #            xMax: 10,
 #            type: "TH1F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }
 #
 #dEdx_vs_p: {  name: "dEdx_vs_p",
@@ -218,7 +260,9 @@ fCosL:      {  name: "fCosL",
 #            yMin: 0,
 #            yMax: 600,
 #            type: "TH2F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }
 
 meanClSize_vs_p: {  name: "meanClSize_vs_p",
@@ -232,7 +276,9 @@ meanClSize_vs_p: {  name: "meanClSize_vs_p",
             yMin: 0,
             yMax: 15,
             type: "TH2F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 clSizeCosL_vs_p: {  name: "clSizeCosL_vs_p",
@@ -246,7 +292,9 @@ clSizeCosL_vs_p: {  name: "clSizeCosL_vs_p",
             yMin: 0,
             yMax: 15,
             type: "TH2F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 clSizeCosL_vs_beta: {  name: "clSizeCosL_vs_beta",
@@ -260,7 +308,9 @@ clSizeCosL_vs_beta: {  name: "clSizeCosL_vs_beta",
             yMin: 0,
             yMax: 15,
             type: "TH2F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 beta_vs_p: {  name: "beta_vs_p",
@@ -274,7 +324,41 @@ beta_vs_p: {  name: "beta_vs_p",
             yMin: 0,
             yMax: 1,
             type: "TH2F",
-            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
+            }
+
+partid_vs_p: {  name: "partid_vs_p",
+            title: "Particle ID vs #it{p}; #it{p} (GeV/#it{c}); Particle ID; Counts",
+            xVariable: "fP",
+            nXBins: 200,
+            xMin: -5,
+            xMax: 5,
+            yVariable: "fPartID",
+            nYBins: 10,
+            yMin: 0,
+            yMax: 10,
+            type: "TH2F",
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
+            }
+
+partid_vs_pabs: {  name: "partid_vs_pabs",
+            title: "Particle ID vs |#it{p}|; |#it{p}| (GeV/#it{c}); Particle ID; Counts",
+            xVariable: "fP",
+            nXBins: 200,
+            xMin: 0,
+            xMax: 5,
+            yVariable: "fPartID",
+            nYBins: 10,
+            yMin: 0,
+            yMax: 10,
+            type: "TH2F",
+            particle: ["all", #"El", 
+                      "Pi", "Ka", "Pr", #"De", "He"
+                      ],
             }
 
 #dEdx_vs_pTPC: {  name: "dEdx_vs_pTPC",
@@ -288,7 +372,9 @@ beta_vs_p: {  name: "beta_vs_p",
 #            yMin: 0,
 #            yMax: 600,
 #            type: "TH2F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }
 
 #clSizeCosL_vs_pTPC: {  name: "clSizeCosL_vs_pTPC",
@@ -302,7 +388,9 @@ beta_vs_p: {  name: "beta_vs_p",
 #            yMin: 0,
 #            yMax: 25,
 #            type: "TH2F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }
 #
 #beta_vs_pTPC: {  name: "beta_vs_pTPC",
@@ -316,7 +404,9 @@ beta_vs_p: {  name: "beta_vs_p",
 #            yMin: 0,
 #            yMax: 1,
 #            type: "TH2F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }
 #
 #deltaP_vs_pTPC: {  name: "deltaP_vs_pTPC",
@@ -330,5 +420,7 @@ beta_vs_p: {  name: "beta_vs_p",
 #            yMin: 0,
 #            yMax: 1,
 #            type: "TH2F",
-#            particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+#            particle: ["all", #"El", 
+#          "Pi", "Ka", "Pr", #"De", "He"
+#          ],
 #            }

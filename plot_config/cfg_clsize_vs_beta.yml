@@ -1,0 +1,146 @@
+#
+# Configuration file for plots
+#
+
+outPath: clsize_vs_beta.root
+
+plots:
+  [
+    # 1
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.3,
+            xmax: 1,
+            name: 'clsize_vs_beta',
+            title: '#LT Cluster size #GT #times #LT cos #lambda #GT vs #beta; #beta; #LT Cluster size #GT #times #LT cos #lambda #GT; Counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0,
+            xmax: 12,
+            name: 'clsize_vs_beta',
+            title: '#LT Cluster size #GT #times #LT cos #lambda #GT vs #beta; #beta; #LT Cluster size #GT #times #LT cos #lambda #GT; Counts',
+          },
+        ],
+      multigraph:
+      {
+        name: 'clsize_vs_beta',
+        title: '#LT Cluster size #GT #times #LT cos #lambda #GT vs #beta; #beta; #LT Cluster size #GT #times #LT cos #lambda #GT; Counts',
+        kwargs: { 
+                  draw_option: 'p',
+                }
+      },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation.root,
+            graphName: 'clsize_vs_beta_Pi/clSizeCosL_vs_beta_Pi_sig_points',
+            graphLabel: '#pi',
+            kwargs: {
+                      line_color: 629,  # kRed-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 629,  # kRed-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation.root,
+            graphName: 'clsize_vs_beta_Ka/clSizeCosL_vs_beta_Ka_sig_points',
+            graphLabel: 'K',
+            kwargs: {
+                      line_color: 800,  # kOrange
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 800,  # kOrange
+                      marker_style: 21,
+                      marker_size: 1,
+                      draw_option: 'same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation.root,
+            graphName: 'clsize_vs_beta_Pr/clSizeCosL_vs_beta_Pr_sig_points',
+            graphLabel: 'p',
+            kwargs: {
+                      line_color: 434,  # kCyan+2
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 434,  # kCyan+2
+                      marker_style: 22,
+                      marker_size: 1,
+                      draw_option: 'same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/cascade.root',
+            graphName: 'clsize_vs_beta_Xi/clSizeCosL_vs_beta_Xi_sig_points',
+            graphLabel: '#Xi',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 23,
+                      marker_size: 1,
+                      draw_option: 'same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/cascade.root',
+            graphName: 'clsize_vs_beta_Omega/clSizeCosL_vs_beta_Omega_sig_points',
+            graphLabel: '#Omega',
+            kwargs: {
+                      line_color: 597,  # kBlue-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 597,  # kBlue-3
+                      marker_style: 24,
+                      marker_size: 1,
+                      draw_option: 'same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass4_skimmed/bethe_bloch_parametrisation.root',
+            graphName: 'clsize_vs_beta_He/clSizeCosL_vs_beta_He_sig_points',
+            graphLabel: '^{3}He',
+            kwargs: {
+                      line_color: 877,  # kViolet-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 877,  # kViolet-3
+                      marker_style: 25,
+                      marker_size: 1,
+                      draw_option: 'same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.6,
+          xmax: 0.89,
+          ymin: 0.7,
+          ymax: 0.89,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 2,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  clsize_vs_beta.pdf
+    },
+
+  ]

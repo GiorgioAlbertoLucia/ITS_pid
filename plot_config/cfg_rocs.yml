@@ -1,0 +1,877 @@
+#
+# Configuration file for plots
+#
+
+outPath: rocs_cls.root
+
+plots:
+  [
+    # 1 - Pi 0.35
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.28,
+            xmax: 1.02,
+            name: 'roc_04_Pi',
+            title: '; Purity; Efficiency',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.66,
+            xmax: 1.02,
+            name: 'roc_04_Pi',
+            title: '; Purity; Efficiency',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'roc04_Pi',
+          title: '; Purity; Efficiency',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            graphName: 'ROC/roc_0.40_Pi',
+            graphLabel: '#pi',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 797,  # kOrange-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'pl same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/nsigma_output.root',
+            graphName: 'purity_efficiency_0.35/Pi_purity_efficiency',
+            graphLabel: '#pi (1#sigma cut)',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 22,
+                      marker_size: 2,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.15,
+          xmax: 0.35,
+          ymin: 0.15,
+          ymax: 0.29,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  roc_cls_035_Pi.pdf
+    },
+
+    # 2 - Ka 0.35
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.28,
+            xmax: 1.02,
+            name: 'roc_04_Ka',
+            title: '; Purity; Efficiency',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.42,
+            xmax: 1.02,
+            name: 'roc_04',
+            title: '; Purity; Efficiency',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'roc04_Ka',
+          title: '; Purity; Efficiency',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            graphName: 'ROC/roc_0.40_Ka',
+            graphLabel: 'K',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 797,  # kOrange-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'pl same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/nsigma_output.root',
+            graphName: 'purity_efficiency_0.35/Ka_purity_efficiency',
+            graphLabel: 'K (1#sigma cut)',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 22,
+                      marker_size: 2,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.15,
+          xmax: 0.35,
+          ymin: 0.15,
+          ymax: 0.29,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  roc_cls_035_Ka.pdf
+    },
+
+    # 3 - Pr 0.35
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.28,
+            xmax: 1.02,
+            name: 'roc_04_Pr',
+            title: '; Purity; Efficiency',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.56,
+            xmax: 1.02,
+            name: 'roc_04_Pr',
+            title: '; Purity; Efficiency',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'roc04',
+          title: '; Purity; Efficiency',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            graphName: 'ROC/roc_0.40_Pr',
+            graphLabel: 'p',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 797,  # kOrange-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'pl same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/nsigma_output.root',
+            graphName: 'purity_efficiency_0.35/Pr_purity_efficiency',
+            graphLabel: 'p (1#sigma cut)',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 22,
+                      marker_size: 2,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.15,
+          xmax: 0.35,
+          ymin: 0.15,
+          ymax: 0.29,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  roc_cls_035_Pr.pdf
+    },
+
+
+    # 1 - Pi 0.55
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.28,
+            xmax: 1.02,
+            name: 'roc_06_Pi',
+            title: '; Purity; Efficiency',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.42,
+            xmax: 1.02,
+            name: 'roc_06_Pi',
+            title: '; Purity; Efficiency',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'roc06_Pi',
+          title: '; Purity; Efficiency',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            graphName: 'ROC/roc_0.60_Pi',
+            graphLabel: '#pi',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 797,  # kOrange-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'pl same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/nsigma_output.root',
+            graphName: 'purity_efficiency_0.55/Pi_purity_efficiency',
+            graphLabel: '#pi (1#sigma cut)',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 22,
+                      marker_size: 2,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.15,
+          xmax: 0.35,
+          ymin: 0.15,
+          ymax: 0.29,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  roc_cls_055_Pi.pdf
+    },
+
+    # 2 - Ka 0.55
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.28,
+            xmax: 1.02,
+            name: 'roc_06_Ka',
+            title: '; Purity; Efficiency',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.42,
+            xmax: 1.02,
+            name: 'roc_06',
+            title: '; Purity; Efficiency',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'roc06_Ka',
+          title: '; Purity; Efficiency',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            graphName: 'ROC/roc_0.60_Ka',
+            graphLabel: 'K',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 797,  # kOrange-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'pl same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/nsigma_output.root',
+            graphName: 'purity_efficiency_0.55/Ka_purity_efficiency',
+            graphLabel: 'K (1#sigma cut)',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 22,
+                      marker_size: 2,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.15,
+          xmax: 0.35,
+          ymin: 0.15,
+          ymax: 0.29,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  roc_cls_055_Ka.pdf
+    },
+
+    # 3 - Pr 0.55
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.28,
+            xmax: 1.02,
+            name: 'roc_06_Pr',
+            title: '; Purity; Efficiency',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.42,
+            xmax: 1.02,
+            name: 'roc_06_Pr',
+            title: '; Purity; Efficiency',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'roc06',
+          title: '; Purity; Efficiency',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            graphName: 'ROC/roc_0.60_Pr',
+            graphLabel: 'p',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 797,  # kOrange-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'pl same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/nsigma_output.root',
+            graphName: 'purity_efficiency_0.55/Pr_purity_efficiency',
+            graphLabel: 'p (1#sigma cut)',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 22,
+                      marker_size: 2,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.15,
+          xmax: 0.35,
+          ymin: 0.15,
+          ymax: 0.29,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  roc_cls_055_Pr.pdf
+    },
+
+
+    # 1 - Pi 0.95
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.28,
+            xmax: 0.84,
+            name: 'roc_10_Pi',
+            title: '; Purity; Efficiency',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.42,
+            xmax: 1.02,
+            name: 'roc_10_Pi',
+            title: '; Purity; Efficiency',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'roc10_Pi',
+          title: '; Purity; Efficiency',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            graphName: 'ROC/roc_1.00_Pi',
+            graphLabel: '#pi',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 797,  # kOrange-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'pl same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/nsigma_output.root',
+            graphName: 'purity_efficiency_0.95/Pi_purity_efficiency',
+            graphLabel: '#pi (1#sigma cut)',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 22,
+                      marker_size: 2,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.15,
+          xmax: 0.35,
+          ymin: 0.15,
+          ymax: 0.29,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  roc_cls_095_Pi.pdf
+    },
+
+    # 2 - Ka 0.95
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.28,
+            xmax: 1.02,
+            name: 'roc_10_Ka',
+            title: '; Purity; Efficiency',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.42,
+            xmax: 1.02,
+            name: 'roc_10',
+            title: '; Purity; Efficiency',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'roc10_Ka',
+          title: '; Purity; Efficiency',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            graphName: 'ROC/roc_1.00_Ka',
+            graphLabel: 'K',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 797,  # kOrange-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'pl same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/nsigma_output.root',
+            graphName: 'purity_efficiency_0.95/Ka_purity_efficiency',
+            graphLabel: 'K (1#sigma cut)',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 22,
+                      marker_size: 2,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.15,
+          xmax: 0.35,
+          ymin: 0.45,
+          ymax: 0.59,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  roc_cls_095_Ka.pdf
+    },
+
+    # 3 - Pr 0.95
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0.28,
+            xmax: 0.88,
+            name: 'roc_10_Pr',
+            title: '; Purity; Efficiency',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.38,
+            xmax: 1.02,
+            name: 'roc_10_Pr',
+            title: '; Purity; Efficiency',
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag
+        },
+      multigraph:
+        {
+          name: 'roc10',
+          title: '; Purity; Efficiency',
+          kwargs: { 
+                    draw_option: 'p',
+                  }
+        },
+      graphs:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            graphName: 'ROC/roc_1.00_Pr',
+            graphLabel: 'p',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 797,  # kOrange-3
+                      marker_style: 20,
+                      marker_size: 1,
+                      draw_option: 'pl same',
+                    }
+          },
+          {
+            inPath: '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/nsigma_output.root',
+            graphName: 'purity_efficiency_0.95/Pr_purity_efficiency',
+            graphLabel: 'p (1#sigma cut)',
+            kwargs: {
+                      line_color: 413,  # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 413,  # kGreen-3
+                      marker_style: 22,
+                      marker_size: 2,
+                      draw_option: 'p same',
+                    }
+          },
+        ],
+      legend:
+        {
+          bool: 1,
+          xmin: 0.15,
+          xmax: 0.35,
+          ymin: 0.15,
+          ymax: 0.29,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 1,
+                    textSize: 400,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  roc_cls_095_Pr.pdf
+    },
+
+    # 4 - scores
+    {
+      axisSpecs: 
+        [
+          # x axis
+          {
+            nbins: 100,
+            xmin: 0,
+            xmax: 1,
+            name: 'score',
+            title: ';#pi score; Normalized counts',
+          },
+          # y axis
+          {
+            nbins: 0,
+            xmin: 0.001,
+            xmax: 1,
+            name: 'score',
+            title: ';#pi score; Normalized counts',
+          },
+        ],
+      hists:
+        [
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            histName: Hists/Pi_Pi_0.5,
+            histLabel: 'f_{#pi}',
+            kwargs: {
+                      line_color: 600,    # kBlue
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 1,
+                      marker_style: 1,
+                      marker_size: 1,
+                      fill_color: 600,    # kBlue
+                      fill_style: 3356,
+                      fill_alpha: 0.5,
+                      draw_option: 'hist same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            histName: Hists/Pi_Ka_0.5,
+            histLabel: 'f_{K}',
+            kwargs: {
+                      line_color: 413,   # kGreen-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 1,
+                      marker_style: 1,
+                      marker_size: 1,
+                      fill_color: 413,   # kGreen-3
+                      fill_style: 3356,
+                      fill_alpha: 0.5,
+                      draw_option: 'hist same',
+                    }
+          },
+          {
+            inPath: /home/galucia/ITS_pid/output/bdt_cls_output_22082024.root,
+            histName: Hists/Pi_Pr_0.5,
+            histLabel: 'f_{p}',
+            kwargs: {
+                      line_color: 797,  # kOrange-3
+                      line_width: 1,
+                      line_style: 1,
+                      marker_color: 1,
+                      marker_style: 1,
+                      marker_size: 1,
+                      fill_color: 797,
+                      fill_style: 3356,
+                      fill_alpha: 0.5,
+                      draw_option: 'hist same',
+                    }
+          },
+        ],
+      canvas:
+        {
+          dummy: True, # dummy flag,
+          logy: True,
+        },
+      legend:
+        {
+          bool: 1,
+          xmin: 0.6,
+          xmax: 0.79,
+          ymin: 0.65,
+          ymax: 0.85,
+          kwargs: {
+                    border_size: 0,
+                    nColumns: 0,
+                    textSize: 40.03,
+                    header: '',
+                    fill_color: 0,
+                    fill_style: 0,
+                    fill_alpha: 0,
+                    draw_option: 'same',
+                  }
+        },
+      outPDF:  score_cls_045_Pi.pdf
+    },
+
+  ]

@@ -1,0 +1,170 @@
+all_species: ['Unidentified', 'El', 'Pi', 'Ka', 'Pr', 'De', 'He']
+train_species: ['Pi', 'Ka', 'Pr', 'De', 'He']
+features: [ #'fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fItsClusterSizeL3', 'fItsClusterSizeL4', 
+            'fItsClusterSizeL5', 'fItsClusterSizeL6', 
+            'fEta', 'fPhi', 'fCosL', 
+            'fPAbs', 'fMeanItsClSize', 'fClSizeCosL']
+target: 'fPartID'
+
+load_from_optuna: True
+optuna_hyperparameters_path: '/home/galucia/ITS_pid/models/bdt_cls_optuna.pkl'
+hyperparameters:
+  max_depth: 5
+  learning_rate: 0.005
+  n_estimators: 800
+  tree_method: 'gpu_hist'
+  #eval_metric: 'rmse'
+  booster: gbtree
+  gamma: 0
+  min_child_weight: 9
+  subsample: 0.8
+  colsample_bytree: 0.9
+  reg_alpha: 0.5
+  reg_lambda: 0.5
+  n_jobs: 20
+  #device: 'cuda'
+  random_state: 42
+  objective: 'multi:sofprob'
+  #eval_metric: 'auc'
+
+kwargs_fit:
+  early_stopping_rounds: 10
+
+#model_path: '/home/galucia/ITS_pid/models/bdt_cls.pkl'
+#output_file_train: '/home/galucia/ITS_pid/output/bdt_cls_train.parquet'
+#output_file_test: '/home/galucia/ITS_pid/output/bdt_cls_test.parquet'
+
+#model_path: '/home/galucia/ITS_pid/models/bdt_cls_ensemble.pkl'
+model_path: '/home/galucia/ITS_pid/models/bdt_cls_ensemble_he.pkl'
+output_file_train: '/home/galucia/ITS_pid/output/bdt_cls_ensemble_train_he.parquet'
+output_file_test: '/home/galucia/ITS_pid/output/bdt_cls_ensemble_test_he.parquet'
+
+# plots
+betaml_plot: {
+  axisSpecX: {
+    nbins: 200,
+    xmin: -1,
+    xmax: 1,
+    name: 'beta_ml',
+    title: '#beta_{ML}; #it{p} (GeV/#it{c}); #beta_{ML}',
+    },
+  axisSpecY: {
+    nbins: 500,
+    xmin: 0,
+    xmax: 1,
+    name: 'beta_ml',
+    title: '#beta_{ML}; #it{p} (GeV/#it{c}); #beta_{ML}',
+    }
+  }
+
+beta_plot: {
+  axisSpecX: {
+    nbins: 200,
+    xmin: -1,
+    xmax: 1,
+    name: 'beta',
+    title: '#beta; #it{p} (GeV/#it{c}); #beta',
+    },
+  axisSpecY: {
+    nbins: 500,
+    xmin: 0,
+    xmax: 1,
+    name: 'beta',
+    title: '#beta; #it{p} (GeV/#it{c}); #beta',
+    }
+  }
+
+delta_beta_plot: {
+  axisSpecX: {
+    nbins: 200,
+    xmin: -1,
+    xmax: 1,
+    name: 'delta_beta',
+    title: '#Delta #beta; #it{p} (GeV/#it{c}); #Delta #beta',
+    },
+  axisSpecY: {
+    nbins: 500,
+    xmin: -0.5,
+    xmax: 0.5,
+    name: 'delta_beta',
+    title: '#Delta #beta; #it{p} (GeV/#it{c}); #Delta#beta',
+    }
+  }
+
+class_scores_plot: {
+  axisSpecX: {
+    nbins: 7,
+    xmin: 0.35,
+    xmax: 1.05,
+    name: 'class_scores',
+    title: 'Class scores; #it{p} (GeV/#it{c}); Probability',
+    },
+  axisSpecY: {
+    nbins: 26,
+    xmin: 0,
+    xmax: 1.04,
+    name: 'beta_ml',
+    title: 'Class scores; #it{p} (GeV/#it{c}); Probability',
+    }
+  }
+
+class_scores_plot_th1: {
+  axisSpecX: {
+    nbins: 26,
+    xmin: 0,
+    xmax: 1.04,
+    name: 'class_scores',
+    title: 'Class scores; #it{p} (GeV/#it{c}); Probability',
+    }
+  }
+
+part_id_plot: {
+  axisSpecX: {
+    nbins: 70,
+    xmin: 0.35,
+    xmax: 1.05,
+    name: 'part_id',
+    title: 'Particle ID; #it{p} (GeV/#it{c}); Particle ID',
+    },
+  axisSpecY: {
+    nbins: 7,
+    xmin: -0.5,
+    xmax: 6.5,
+    name: 'part_id',
+    title: 'Particle ID; #it{p} (GeV/#it{c}); Particle ID',
+    }
+  }
+
+confusion_matrix_plot: {
+  axisSpecX: {
+    nbins: 5,
+    xmin: -0.5,
+    xmax: 4.5,
+    name: 'confusion_matrix',
+    title: 'Confusion matrix; Particle ID; Particle ID ML',
+    },
+  axisSpecY: {
+    nbins: 5,
+    xmin: -0.5,
+    xmax: 4.5,
+    name: 'confusion_matrix',
+    title: 'Confusion matrix; Particle ID; Particle ID ML',
+    }
+  }
+
+efficiency_purity_plot: {
+  axisSpecX: {
+    nbins: 5,
+    xmin: 0.,
+    xmax: 5.,
+    name: 'efficiency_purity',
+    title: 'Efficiency & Purity; #it{p} (GeV/#it{c}); ',
+    },
+  axisSpecY: {
+    nbins: 5,
+    xmin: 0.,
+    xmax: 1.2,
+    name: 'efficiency_purity',
+    title: 'Efficiency & Purity; #it{p} (GeV/#it{c}); ',
+    }
+}

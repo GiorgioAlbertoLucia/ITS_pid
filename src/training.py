@@ -16,14 +16,16 @@ from core.fcnn import FCNN
 from core.trainer import NeuralNetworkTrainer
 from framework.utils.terminal_colors import TerminalColors as tc
 
-def train_model(train_dataset:DataHandler, test_dataset:DataHandler, cfg_data_file:str):
+from ROOT import TFile
+
+def train_model(train_dataset:DataHandler, validation_dataset:DataHandler, cfg_data_file:str):
     '''
         Train the model
 
         Parameters
         ----------
         train_dataset (DataHandler): training dataset
-        test_dataset (DataHandler): testing dataset
+        validation_dataset (DataHandler): validation dataset
         cfg (dict): configuration
     '''
 
@@ -33,15 +35,16 @@ def train_model(train_dataset:DataHandler, test_dataset:DataHandler, cfg_data_fi
 
     INPUT_SIZE = len(train_dataset.features)
     OUTPUT_SIZE = 0
-    if cfg['nn_model'] == 'classification':
+    if cfg['nn_mode'] == 'classification':
         OUTPUT_SIZE = train_dataset.num_particles
-    elif cfg['nn_model'] == 'regression':
+    elif cfg['nn_mode'] == 'regression':
         OUTPUT_SIZE = 1
     else:
         raise ValueError("Invalid model type")
     
     model = FCNN(INPUT_SIZE, OUTPUT_SIZE)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    #device = torch.device('cpu')
 
     class_weights = torch.tensor(train_dataset.class_weights, dtype=torch.float32).to(device)
     loss = None
@@ -61,15 +64,23 @@ def train_model(train_dataset:DataHandler, test_dataset:DataHandler, cfg_data_fi
     BATCH_SIZE = cfg['batch_size']
     NN_MODE = cfg['nn_mode']
     NUM_EPOCHS = cfg['num_epochs']
-    trainer = NeuralNetworkTrainer(model, train_dataset, test_dataset, loss, optimizer, NN_MODE, BATCH_SIZE)
+    NUM_THREADS = cfg['num_threads']
+    trainer = NeuralNetworkTrainer(model, train_dataset, validation_dataset, loss, optimizer, NN_MODE, BATCH_SIZE, NUM_THREADS)
 
     train_losses = []
+    validation_epochs = []
+    validation_losses = []
     for epoch in tqdm(range(NUM_EPOCHS)):
         
         train_loss = trainer.train()
         #scheduler.step()
         scheduler.step(train_loss)
         train_losses.append(train_loss)
+        if epoch % 5 == 0:
+            validation_loss = trainer.validation_loss()
+            validation_epochs.append(epoch)
+            validation_losses.append(validation_loss)
+            print(f"Epoch {epoch+1}/{NUM_EPOCHS}, Validation Loss: {validation_loss:.4f}")
         print(f"Epoch {epoch+1}/{NUM_EPOCHS}, Train Loss: {train_loss:.4f}")
     
     torch.save(trainer.model.state_dict(), '../models/fc_model.pth')
@@ -79,13 +90,17 @@ def train_model(train_dataset:DataHandler, test_dataset:DataHandler, cfg_data_fi
 
     plt.figure(figsize=(12, 4))
     plt.plot(epochs, train_losses, label="Train")
-
     plt.xlabel("Epochs")
     plt.ylabel("Loss")
-
     plt.savefig('../output/fc_loss.png')
 
-    trainer.evaluate()
+    plt.figure(figsize=(12, 4))
+    plt.plot(validation_epochs, validation_losses, label="Validation")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.savefig('../output/fc_loss_val.png')
+
+    print('Validation losses: ', validation_losses)
 
     return model
 
@@ -99,7 +114,24 @@ if __name__ == '__main__':
     cfg_output_file = '../config/config_outputs.yml'
     output_file = '../output/data_preparation.root'
 
-    train_handler, test_handler = data_preparation(input_files, output_file, cfg_data_file, cfg_output_file, normalize=True)
+    output_file_root = TFile(output_file, 'RECREATE')
+    outdir = output_file_root.mkdir('n_output')
+
+    #train_handler, test_handler = data_preparation(input_files, output_file, cfg_data_file, cfg_output_file, normalize=True, oversample_momentum=True, oversample=True, force_option='AO2D')
+    train_species = ['Pi', 'Ka', 'Pr']
+    #train_handler, test_handler = data_preparation(input_files, output_file, cfg_data_file, cfg_output_file, normalize=True, force_option='AO2D', split=True, species_selection=[True, train_species], variable_selection=[True, 'fPAbs', 0., 1.0], oversample_momentum=True, n_samples=int(1e7), oversample=True)
+    train_handler, validation_handler, test_handler = data_preparation(input_files, output_file_root, cfg_data_file, cfg_output_file, force_option='AO2D', 
+                                                   normalize=True, 
+                                                   rename_classes=True, 
+                                                   split=True, 
+                                                   species_selection=[True, train_species], 
+                                                   variable_selection=[True, 'fPAbs', 0., 1.0], 
+                                                   flatten_samples=['fPAbs', 250, 0., 2.5, 500], 
+                                                   clean_protons=True, 
+                                                   oversample_momentum=[True, 'fPAbs', 500, 0., 5.], 
+                                                   n_samples=None, 
+                                                   oversample=False)
+    train_handler, validation_handler = train_handler.train_test_split(0.05)
     #test_handler = copy.deepcopy(train_handler)
 
-    train_model(train_handler, test_handler, cfg_data_file)
+    train_model(train_handler, validation_handler, cfg_data_file)
