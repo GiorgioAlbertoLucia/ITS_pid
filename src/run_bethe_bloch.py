@@ -12,12 +12,6 @@ from ROOT import (TFile, TDirectory, TH1F, TH2F, TF1, TCanvas, gInterpreter,
 import logging
 from typing import Dict, List, Tuple
 
-# Include BetheBloch C++ file
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-BETHEBLOCH_DIR = os.path.join(CURRENT_DIR, '..', 'include', 'BetheBloch.hh')
-gInterpreter.ProcessLine(f'#include "{BETHEBLOCH_DIR}"')
-from ROOT import BetheBloch
-
 # Custom imports
 sys.path.append('..')
 from framework.src.axis_spec import AxisSpec
@@ -26,7 +20,7 @@ from framework.utils.terminal_colors import TerminalColors as tc
 from framework.utils.root_setter import obj_setter
 from framework.utils.timeit import timeit
 from core.dataset import DataHandler
-from core.bethe_bloch_parametrisation_new import BetheBlochParametrisation
+from core.bethe_bloch_parametrisation import BetheBlochParametrisation
 import ROOT
 
 
@@ -101,11 +95,11 @@ def draw_nsigma_momentum(data_handler: DataHandler, bb_param: BetheBlochParametr
     bb_param._set_output_dir(dir_comb)
     bb_param.init_config('p')
     BB_params = {
-        'kp1': -0.031712,
-        'kp2': -45.0275,
-        'kp3': -0.997645,
-        'kp4': 1.68228,
-        'kp5': 0.0108484
+        'kp1': -0.08080,
+        'kp2': -25.64,
+        'kp3': -0.3799,
+        'kp4': 1.371,
+        'kp5': 0.3235
     }
     bb_param.upload_bethe_bloch_params(BB_params)
     bb_param.select_fit_particle(particle)
@@ -113,6 +107,8 @@ def draw_nsigma_momentum(data_handler: DataHandler, bb_param: BetheBlochParametr
     for part in bb_param.config['species']:
         ds_part = data_handler.dataset.filter(pl.col('fPartID') == data_handler.part_list.index(part))
         bb_param.draw_nsigma_distribution(ds_part, part)
+        bb_param.draw_expected_values(ds_part, part)
+        bb_param.draw_sigma_distribution(ds_part, part)
     #bb_param.purity_efficiency(2, other_particle='Ka')
     #bb_param.purity_efficiency(2, other_particle='Pi')
 

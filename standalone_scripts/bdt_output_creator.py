@@ -554,6 +554,85 @@ def efficiency_purity_vs_momentum_ensemble_he(input_file:str, output_file:TDirec
             outdir_roc.cd()
             roc_Pi.Write()
 
+def efficiency_purity_vs_momentum_dataframe(input_file:str, output_file:str):
+    '''
+        Calculate efficiency and purity per momentum bin
+
+        Parameters
+        ----------
+        input_file (str): input file
+        output_file (str): output file
+
+    '''
+
+    roc_data = pl.DataFrame({'particle': pl.Series(values=[], dtype=str),
+                             'momentum': pl.Series(values=[], dtype=pl.Float32),
+                             'threshold': pl.Series(values=[], dtype=pl.Float32),
+                             'efficiency': pl.Series(values=[], dtype=pl.Float32),
+                             'purity': pl.Series(values=[], dtype=pl.Float32)})
+
+    particles = ['Pi', 'Ka', 'Pr']
+    partid = {'Pi': 0, 'Ka': 1, 'Pr': 2}
+    momentum_bins = [0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95, 1.05]
+    data = pl.read_parquet(input_file)
+
+    for momentum_bin in range(len(momentum_bins)-1):
+
+        data_bin = data.filter((pl.col('fPAbs').is_between(momentum_bins[momentum_bin], momentum_bins[momentum_bin+1])))
+        
+        for particle in particles:
+            
+            other_particles = [part for part in particles if part != particle]
+            for th in np.linspace(0.0, 1.0, 30):
+                
+                tp = data_bin.filter((pl.col(f'fProbML{particle}') > th) & (pl.col('fPartID') == partid[particle])).shape[0]
+                fps = [data_bin.filter((pl.col(f'fProbML{particle}') > th) & (pl.col('fPartID') == partid[other_particle])).shape[0] for other_particle in other_particles]
+                fn = data_bin.filter((pl.col(f'fProbML{particle}') < th) & (pl.col('fPartID') == partid[particle])).shape[0]
+                tns = [data_bin.filter((pl.col(f'fProbML{particle}') < th) & (pl.col('fPartID') == partid[other_particle])).shape[0] for other_particle in other_particles]
+
+                
+                eff = tp / (tp + fn) if (tp + fn) > 0 else -1.
+                if (tp + fn) < 0:
+                    pur = -1.
+                else:
+                    den = tp / (tp + fn)
+                    for fp, tn in zip(fps, tns):
+                        if fp + tn > 0:
+                            den = den + fp / (fp + tn) 
+                    if den > 0:
+                        pur = tp / (tp + fn) / den
+                    else:
+                        pur = -1.
+                
+                roc_data_tmp = pl.DataFrame({'particle': pl.Series([particle], dtype=str),
+                                             'momentum': pl.Series([momentum_bins[momentum_bin]], dtype=pl.Float32),
+                                             'threshold': pl.Series([th], dtype=pl.Float32),
+                                             'efficiency': pl.Series([eff], dtype=pl.Float32),
+                                             'purity': pl.Series([pur], dtype=pl.Float32)})
+
+                if len(roc_data) == 0:
+                    roc_data = roc_data_tmp
+                else:
+                    roc_data = pl.concat([roc_data, roc_data_tmp])
+
+            roc_data = roc_data.filter((pl.col('purity') > -0.5) & (pl.col('efficiency') > -0.5))
+            graph_handler = GraphHandler(roc_data)
+            roc = graph_handler.createTGraph('purity', 'efficiency')
+            if roc is not None:
+                obj_setter(roc, name=f'roc_{momentum_bins[momentum_bin]}_{particle}', title=f'ROC curve for {particle} at {momentum_bins[momentum_bin]} GeV/#it{{c}}; Purity; Efficiency', marker_color=4, marker_style=20)
+                output_file.cd()
+                roc.Write()
+
+            roc_data = pl.DataFrame({'particle': pl.Series(values=[], dtype=str),
+                             'momentum': pl.Series(values=[], dtype=pl.Float32),
+                             'threshold': pl.Series(values=[], dtype=pl.Float32),
+                             'efficiency': pl.Series(values=[], dtype=pl.Float32),
+                             'purity': pl.Series(values=[], dtype=pl.Float32)})
+            
+
+                    
+
+
 
 if __name__ == '__main__':
 
@@ -562,17 +641,21 @@ if __name__ == '__main__':
     logging.basicConfig(filename="/home/galucia/ITS_pid/output/output_bdt.log", level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
     #input_files = ['../../data/0720/its_PIDStudy.root']
-    input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root']
+    #input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root']
+    input_file = '/home/galucia/ITS_pid/output/bdt_cls_28082024_7hits2.root'
+    #input_file = '/home/galucia/ITS_pid/output/bdt_cls_ensemble_test.parquet'
     cfg_data_file = '../config/config_data.yml'
     cfg_output_file = '../config/config_outputs.yml'
     
     #output_file = '../output/bdt_beta.root'
     #input_file = '../output/bdt_cls_20082024_35off.root'
     #input_file = '../output/bdt_cls_22082024.root'
-    input_file = '../output/bdt_cls_22082024_he.root'
+    #input_file = '../output/bdt_cls_22082024_he.root'
     #output_file = '../output/bdt_cls_output_35off.root'
     #output_file = '../output/bdt_cls_output_22082024.root'
-    output_file = '../output/bdt_cls_output_22082024_he.root'
+    #output_file = '../output/bdt_cls_output_22082024_df.root'
+    output_file = '../output/bdt_cls_output_28082024_7hits2.root'
+    #output_file = '../output/bdt_cls_output_22082024_he.root'
     output_file_root = TFile(output_file, 'RECREATE')
     
     #train_data = pl.read_parquet('/home/galucia/ITS_pid/output/bdt_cls_train.parquet')
@@ -588,8 +671,9 @@ if __name__ == '__main__':
     #bdt_classifier.draw_efficiency_purity_vs_momentum(0.3, 1.0, 0.1)
     #bdt_classifier.draw_confusion_matrix()
 
-    #efficiency_purity_vs_momentum(input_file, output_file_root)
     efficiency_purity_vs_momentum_ensemble(input_file, output_file_root)
+    
+    #efficiency_purity_vs_momentum_dataframe(input_file, output_file_root)
 
     #check(input_file, output_file_root)
 

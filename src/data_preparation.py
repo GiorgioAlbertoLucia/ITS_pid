@@ -42,6 +42,10 @@ def data_visualization(train_handler:DataHandler, cfg_output:dict, cfg_data:dict
         for part in cfg['particle']:
 
             if 'TH1' in cfg['type']:
+                
+                if cfg['xVariable'] not in train_handler.dataset.columns:
+                    print(tc.UNDERLINE+tc.RED+'ERROR:'+tc.RESET,cfg['xVariable'],'not present in dataset!')
+                    continue
 
                 axisSpecX = AxisSpec(cfg['nXBins'], cfg['xMin'], cfg['xMax'], cfg['name'], cfg['title'])
                 hist = hist_handler[part].buildTH1(cfg['xVariable'], axisSpecX)
@@ -50,6 +54,13 @@ def data_visualization(train_handler:DataHandler, cfg_output:dict, cfg_data:dict
                 hist.Write()
 
             if 'TH2' in cfg['type']:
+                
+                if cfg['xVariable'] not in train_handler.dataset.columns:
+                        print(tc.UNDERLINE+tc.RED+'ERROR:'+tc.RESET,cfg['xVariable'],'not present in dataset!')
+                        continue
+                elif cfg['yVariable'] not in train_handler.dataset.columns:
+                    print(tc.UNDERLINE+tc.RED+'ERROR:'+tc.RESET,cfg['yVariable'],'not present in dataset!')
+                    continue
 
                 axisSpecX = AxisSpec(cfg['nXBins'], cfg['xMin'], cfg['xMax'], cfg['name'], cfg['title'])
                 axisSpecY = AxisSpec(cfg['nYBins'], cfg['yMin'], cfg['yMax'], cfg['name'], cfg['title'])
@@ -126,6 +137,7 @@ def data_preparation(input_files:list, output_file:TDirectory, cfg_data_file:str
 
     if kwargs.get('minimum_hits', None):
         train_handler.dataset = train_handler.dataset.filter(pl.col('fNClustersIts') >= kwargs['minimum_hits'])
+        test_handler.dataset = test_handler.dataset.filter(pl.col('fNClustersIts') >= kwargs['minimum_hits'])
         if kwargs.get('debug', False):
             print('minimum hits')
             print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
@@ -193,7 +205,10 @@ def data_preparation(input_files:list, output_file:TDirectory, cfg_data_file:str
     #train_handler.enhance_class('Pi', 2)
 
     #train_handler, validation_handler = train_handler.train_test_split(cfg_data['validation_size'])
-    test_handler, validation_handler = test_handler.train_test_split(cfg_data['validation_size'])
+    if kwargs.get('validation', True):
+        test_handler, validation_handler = test_handler.train_test_split(cfg_data['validation_size'])
+    else:
+        validation_handler = None
     if kwargs.get('debug', False):
             print('validation')
             print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
@@ -217,88 +232,6 @@ def data_preparation(input_files:list, output_file:TDirectory, cfg_data_file:str
 
     return train_handler, validation_handler, test_handler
 
-@timeit
-def data_preparation_with_he(input_files:list, input_files_he:list, output_file:TDirectory, cfg_data_file:str, cfg_output_file:str, **kwargs):
-    '''
-        Prepare the data for the model
-
-        Parameters
-        ----------
-        input_files (list): list of input files
-        output_file (str): output file
-        cfg_data_file (str): configuration file for the data
-        cfg_output_file (str): configuration file for the output
-    '''
-
-    with open(cfg_output_file, 'r') as file:
-        cfg_output = yaml.safe_load(file)
-    with open(cfg_data_file, 'r') as file:
-        cfg_data = yaml.safe_load(file)
-
-    print(tc.BOLD+tc.GREEN+'Data preparation'+tc.RESET)
-    data_handler = DataHandler(input_files, cfg_data_file, **kwargs)
-    if 'fIsPositive' in data_handler.dataset.columns:
-        data_handler.dataset = data_handler.dataset.drop('fIsPositive')
-
-    data_handler_he = DataHandler(input_files_he, cfg_data_file, rigidity_he=False, **kwargs)
-    data_handler_he.correct_for_pid_in_trk()
-
-    data_handler.dataset = data_handler.dataset.filter(pl.col('fPartID') != cfg_data['species'].index('He'))
-    print('particles in data_handler:', data_handler.dataset['fPartID'].unique())
-    print('particles in data_handler_he:', data_handler_he.dataset['fPartID'].unique())
-    data_handler.dataset = pl.concat([data_handler.dataset, data_handler_he.dataset[data_handler.dataset.columns]])
-    data_handler.part_list = data_handler.part_list + ['He']
-    print('particles in data_handler:', data_handler.dataset['fPartID'].unique())
-    
-    species_selection_opt = kwargs.get('species_selection', [False, 'list of species'])
-    if species_selection_opt[0]:
-        data_handler.select_species(species_selection_opt[1])
-    if kwargs.get('rename_classes', False):
-        data_handler.rename_classes()
-
-    if kwargs.get('split', False):
-        train_handler, test_handler = data_handler.train_test_split(cfg_data['test_size'])
-    elif kwargs.get('test_path', None):
-        test_handler = DataHandler(kwargs['test_path'], cfg_data_file, **kwargs)
-        if species_selection_opt[0]:
-            test_handler.select_species(species_selection_opt[1])
-        if kwargs.get('rename_classes', False):
-            test_handler.rename_classes()
-        train_handler = data_handler
-    else:
-        train_handler = data_handler
-        test_handler = None
-
-    if kwargs.get('minimum_hits', None):
-        train_handler.dataset = train_handler.dataset.filter(pl.col('fNClustersIts') >= kwargs['minimum_hits'])
-    variable_selection_opt = kwargs.get('variable_selection', [False, 'var', 'min:float', 'max:float'])
-    if variable_selection_opt[0]:
-        train_handler.dataset = train_handler.dataset.filter(pl.col(variable_selection_opt[1]).is_between(variable_selection_opt[2], variable_selection_opt[3]))
-    if kwargs.get('clean_protons', False):
-        train_handler.clean_protons()
-    variable_oversample_opt = kwargs.get('oversample_momentum', [False, 'var', 'int:nsamples', 'min:float', 'max:float'])
-    if variable_oversample_opt[0]:
-        train_handler.variable_oversample(variable_oversample_opt[1], variable_oversample_opt[2], variable_oversample_opt[3], variable_oversample_opt[4], max_per_bin=1000)
-    if kwargs.get('oversample', False):
-        train_handler.class_oversample()
-    n_samples_opt = kwargs.get('n_samples', None)
-    if n_samples_opt:   
-        train_handler.reduced_dataset(n_samples_opt)
-    flatten_samples_opt = kwargs.get('flatten_samples', ['fPAbs', 250, 0., 2.5, None])
-    if flatten_samples_opt[4]:
-        train_handler.variable_and_class_flattening(flatten_samples_opt[0], flatten_samples_opt[1], flatten_samples_opt[2], flatten_samples_opt[3], flatten_samples_opt[4])
-    #train_handler.enhance_class('Ka', 2)
-    if kwargs.get('normalize', False):   
-        means, stds = train_handler.auto_normalize()
-        test_handler.normalize(means, stds)
-
-    train_handler, validation_handler = train_handler.train_test_split(cfg_data['validation_size'])
-
-    if cfg_data['visualize']:
-        data_visualization(train_handler, cfg_output, cfg_data, output_file, **kwargs)
-
-    return train_handler, validation_handler, test_handler
-
 
 if __name__ == '__main__':
 
@@ -306,23 +239,31 @@ if __name__ == '__main__':
     #input_files = ['/home/galucia/ITS_pid/o2/tree_creator/AO2D.root']
     #input_files = ['/data/galucia/its_pid/MC_LHC24f3/MC_LHC24f3_small.root']
     #input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_slice_pkpi.root']
-    #input_files = ['/data/galucia/its_pid/LHC23_pass4_skimmed/LHC23_pass4_skimmed.root']
+    input_files_he = ['/data/galucia/its_pid/LHC23_pass4_skimmed/LHC23_pass4_skimmed.root']
     #input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small_pkpi.root']
-    #input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root']
-    input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small_old2.root']
+    input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root']
+    #input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small_old2.root']
     cfg_data_file = '../config/config_data.yml'
     cfg_output_file = '../config/config_outputs.yml'
     #output_dir = '../output/MC'
     output_dir = '../output/LHC22o_pass7_minBias_small'
-    #output_dir = '../output/LHC22o_pass4_skimmed'
-    output_file = output_dir+'/data_preparation_olddata2.root'
+    #output_dir = '../output/LHC23_pass4_skimmed'
+    #output_file = output_dir+'/data_preparation_olddata2.root'
+    #output_file = output_dir+'/data_preparation.root'
+    output_file = output_dir+'/data_preparation_he.root'
     #tree_name = 'O2clsttablemcext'
     tree_name = 'O2clsttable'
+    #tree_name = 'O2clsttableextra'
     folder_name = 'DF_*'
 
     output_file_root = TFile(output_file, 'RECREATE')
 
     output_file_root = TFile(output_file, 'RECREATE')
-    data_preparation(input_files, output_file_root, cfg_data_file, cfg_output_file, tree_name=tree_name, folder_name=folder_name, force_option='AO2D', is_mc=False)
+    #data_preparation(input_files, output_file_root, cfg_data_file, cfg_output_file, tree_name=tree_name, folder_name=folder_name, force_option='AO2D', is_mc=False, validation=False)
+    data_preparation(input_files, output_file_root, cfg_data_file, cfg_output_file, input_files_he=input_files_he, 
+                                                            folder_name=folder_name,
+                                                            tree_name=tree_name,
+                                                            force_option='AO2D', 
+                                                            validation=False)
     output_file_root.Close()
 

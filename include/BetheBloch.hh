@@ -35,3 +35,15 @@ double BetheBloch(double * xs, double * params)
 
     return BetheBlochAleph(bg, kp1, kp2, kp3, kp4, kp5);
 }
+
+double BetheBloch(double * xs, double * params)
+{
+    double bg = xs[0];
+    double kp1 = params[0];
+    double kp2 = params[1];
+    double kp3 = params[2];
+    double kp4 = params[3];
+    double kp5 = params[4];
+
+    return BetheBlochAleph(bg, kp1, kp2, kp3, kp4, kp5);
+}

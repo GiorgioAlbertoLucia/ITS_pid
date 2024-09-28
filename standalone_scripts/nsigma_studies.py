@@ -19,8 +19,8 @@ def compute_purity(fit_part:str, part2:str, part3:str, infile_path:str, outfile:
 
     infile = TFile(infile_path, 'READ')
     fit_h2 = infile.Get(f'clsize_vs_p_nsigma_{fit_part}/nsigma_vs_p_{fit_part}_nsigma')
-    part2_h2 = infile.Get(f'clsize_vs_p_nsigma_{part2}/nsigma_vs_p_{part2}_nsigma')
-    part3_h2 = infile.Get(f'clsize_vs_p_nsigma_{part3}/nsigma_vs_p_{part3}_nsigma')
+    part2_h2 = infile.Get(f'clsize_vs_p_nsigma_{fit_part}/nsigma_vs_p_{part2}_nsigma')
+    part3_h2 = infile.Get(f'clsize_vs_p_nsigma_{fit_part}/nsigma_vs_p_{part3}_nsigma')
 
     first_bin = fit_h2.GetXaxis().FindBin(0.3)
     last_bin = fit_h2.GetXaxis().FindBin(5)
@@ -58,6 +58,7 @@ def compute_purity(fit_part:str, part2:str, part3:str, infile_path:str, outfile:
                                                   'spurity': pl.Series(values=[0.], dtype=pl.Float64)})])
                                                   #'spurity': pl.Series(values=[np.sqrt(purity_val * (1 - purity_val) / (part2_pos_int / part2_int + fit_pos_int / fit_int))], dtype=pl.Float64)})])
 
+    purity = purity.filter(pl.col('purity') > -0.5)
     graph_handler = GraphHandler(purity)
     graph = graph_handler.createTGraphErrors('x', 'purity', 'sx', 'spurity')
     graph.SetMarkerStyle(20)
@@ -106,16 +107,16 @@ def compute_efficiency(fit_part:str, infile_path:str, outfile:TDirectory):
     graph.Write(f'efficiency_{fit_part}')
 
 
-def compute_purity_efficiency_per_bin(hists:Dict[str, Dict[str, TH1F]], particles:List[str], momentum_bin:float):
+def compute_purity_efficiency_per_bin(hists:Dict[str, Dict[str, TH1F]], particles:List[str], momentum_bin:float, nsigma:float):
 
     # Pions
     tot_Pi_Pi = hists['Pi']['Pi'].Integral()
     tot_Pi_Ka = hists['Pi']['Ka'].Integral()
     tot_Pi_Pr = hists['Pi']['Pr'].Integral()
 
-    tp_Pi = hists['Pi']['Pi'].Integral(hists['Pi']['Pi'].FindBin(-1), hists['Pi']['Pi'].FindBin(1))
-    fp_Pi_Ka = hists['Pi']['Ka'].Integral(hists['Pi']['Ka'].FindBin(-1), hists['Pi']['Ka'].FindBin(1))
-    fp_Pi_Pr = hists['Pi']['Pr'].Integral(hists['Pi']['Pr'].FindBin(-1), hists['Pi']['Pr'].FindBin(1))
+    tp_Pi = hists['Pi']['Pi'].Integral(hists['Pi']['Pi'].FindBin(-nsigma), hists['Pi']['Pi'].FindBin(nsigma))
+    fp_Pi_Ka = hists['Pi']['Ka'].Integral(hists['Pi']['Ka'].FindBin(-nsigma), hists['Pi']['Ka'].FindBin(nsigma))
+    fp_Pi_Pr = hists['Pi']['Pr'].Integral(hists['Pi']['Pr'].FindBin(-nsigma), hists['Pi']['Pr'].FindBin(nsigma))
 
     eff_Pi = tp_Pi / tot_Pi_Pi if tot_Pi_Pi > 0 else -1
     seff_Pi = np.sqrt(eff_Pi * (1 - eff_Pi) / tot_Pi_Pi) if tot_Pi_Pi > 0 else -1
@@ -127,9 +128,9 @@ def compute_purity_efficiency_per_bin(hists:Dict[str, Dict[str, TH1F]], particle
     tot_Ka_Ka = hists['Ka']['Ka'].Integral()
     tot_Ka_Pr = hists['Ka']['Pr'].Integral()
 
-    tp_Ka = hists['Ka']['Ka'].Integral(hists['Ka']['Ka'].FindBin(-1), hists['Ka']['Ka'].FindBin(1))
-    fp_Ka_Pi = hists['Ka']['Pi'].Integral(hists['Ka']['Pi'].FindBin(-1), hists['Ka']['Pi'].FindBin(1))
-    fp_Ka_Pr = hists['Ka']['Pr'].Integral(hists['Ka']['Pr'].FindBin(-1), hists['Ka']['Pr'].FindBin(1))
+    tp_Ka = hists['Ka']['Ka'].Integral(hists['Ka']['Ka'].FindBin(-nsigma), hists['Ka']['Ka'].FindBin(nsigma))
+    fp_Ka_Pi = hists['Ka']['Pi'].Integral(hists['Ka']['Pi'].FindBin(-nsigma), hists['Ka']['Pi'].FindBin(nsigma))
+    fp_Ka_Pr = hists['Ka']['Pr'].Integral(hists['Ka']['Pr'].FindBin(-nsigma), hists['Ka']['Pr'].FindBin(nsigma))
 
     eff_Ka = tp_Ka / tot_Ka_Ka if tot_Ka_Ka > 0 else -1
     seff_Ka = np.sqrt(eff_Ka * (1 - eff_Ka) / tot_Ka_Ka) if tot_Ka_Ka > 0 else -1
@@ -141,9 +142,9 @@ def compute_purity_efficiency_per_bin(hists:Dict[str, Dict[str, TH1F]], particle
     tot_Pr_Ka = hists['Pr']['Ka'].Integral()
     tot_Pr_Pr = hists['Pr']['Pr'].Integral()
 
-    tp_Pr = hists['Pr']['Pr'].Integral(hists['Pr']['Pr'].FindBin(-1), hists['Pr']['Pr'].FindBin(1))
-    fp_Pr_Pi = hists['Pr']['Pi'].Integral(hists['Pr']['Pi'].FindBin(-1), hists['Pr']['Pi'].FindBin(1))
-    fp_Pr_Ka = hists['Pr']['Ka'].Integral(hists['Pr']['Ka'].FindBin(-1), hists['Pr']['Ka'].FindBin(1))
+    tp_Pr = hists['Pr']['Pr'].Integral(hists['Pr']['Pr'].FindBin(-nsigma), hists['Pr']['Pr'].FindBin(nsigma))
+    fp_Pr_Pi = hists['Pr']['Pi'].Integral(hists['Pr']['Pi'].FindBin(-nsigma), hists['Pr']['Pi'].FindBin(nsigma))
+    fp_Pr_Ka = hists['Pr']['Ka'].Integral(hists['Pr']['Ka'].FindBin(-nsigma), hists['Pr']['Ka'].FindBin(nsigma))
 
     eff_Pr = tp_Pr / tot_Pr_Pr if tot_Pr_Pr > 0 else -1
     seff_Pr = np.sqrt(eff_Pr * (1 - eff_Pr) / tot_Pr_Pr) if tot_Pr_Pr > 0 else -1
@@ -156,9 +157,10 @@ def compute_purity_efficiency_per_bin(hists:Dict[str, Dict[str, TH1F]], particle
                                         'spurity': pl.Series(values=[spur_Pi, spur_Ka, spur_Pr], dtype=pl.Float64),
                                         'efficiency': pl.Series(values=[eff_Pi, eff_Ka, eff_Pr], dtype=pl.Float64),
                                         'sefficiency': pl.Series(values=[seff_Pi, seff_Ka, seff_Pr], dtype=pl.Float64),
-                                        'particle': pl.Series(values=['Pi', 'Ka', 'Pr'], dtype=str)})
+                                        'particle': pl.Series(values=['Pi', 'Ka', 'Pr'], dtype=str),
+                                        'nsigma': pl.Series(values=[nsigma, nsigma, nsigma], dtype=pl.Float64)})
 
-def compute_efficiency_purity(infile_path:str, outfile:TFile):
+def compute_efficiency_purity(infile_path:str, outfile:TFile, nsigma):
 
     infile = TFile(infile_path, 'READ')
     purity_efficiency = pl.DataFrame({'x': pl.Series(values=[], dtype=pl.Float64),
@@ -167,7 +169,8 @@ def compute_efficiency_purity(infile_path:str, outfile:TFile):
                                       'spurity': pl.Series(values=[], dtype=pl.Float64),
                                       'efficiency': pl.Series(values=[], dtype=pl.Float64),
                                       'sefficiency': pl.Series(values=[], dtype=pl.Float64),
-                                      'particle': pl.Series(values=[], dtype=str)})
+                                      'particle': pl.Series(values=[], dtype=str),
+                                      'nsigma': pl.Series(values=[], dtype=pl.Float64)})
 
     momentum_bins = [0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95] #, 1.05]
     hists = {
@@ -212,18 +215,18 @@ def compute_efficiency_purity(infile_path:str, outfile:TFile):
                 hist_slices[pred_part][true_part] = hists[pred_part][true_part].ProjectionY(f'{pred_part}_{true_part}_{momentum_bin}', hists[pred_part][true_part].GetXaxis().FindBin(momentum_bin), hists[pred_part][true_part].GetXaxis().FindBin(momentum_bin))
 
         if len(purity_efficiency) == 0:
-            purity_efficiency = compute_purity_efficiency_per_bin(hist_slices, ['Pi', 'Ka', 'Pr'], momentum_bin)
-        purity_efficiency = pl.concat([purity_efficiency, compute_purity_efficiency_per_bin(hist_slices, ['Pi', 'Ka', 'Pr'], momentum_bin)])
+            purity_efficiency = compute_purity_efficiency_per_bin(hist_slices, ['Pi', 'Ka', 'Pr'], momentum_bin, nsigma)
+        purity_efficiency = pl.concat([purity_efficiency, compute_purity_efficiency_per_bin(hist_slices, ['Pi', 'Ka', 'Pr'], momentum_bin, nsigma)])
 
         ds_graphs = { part: purity_efficiency.filter(((pl.col('x') - momentum_bin).abs() < 0.005) & (pl.col('particle') == part)) for part in ['Pi', 'Ka', 'Pr'] }
         
-        outdir = outfile.mkdir(f'purity_efficiency_{momentum_bin}')
+        outdir = outfile.mkdir(f'purity_efficiency_{momentum_bin}_nsigma_{nsigma}')
         outdir.cd()
         for part in ['Pi', 'Ka', 'Pr']:
             graph = TGraphErrors(1)
             graph.SetPoint(0, ds_graphs[part]['purity'][0], ds_graphs[part]['efficiency'][0]) #ds_graphs[part].sefficiency[0], ds_graphs[part].spurity[0])    
             obj_setter(graph, name=f'{part}_purity_efficiency', title=f'{part} purity vs efficiency;Purity;Efficiency', marker_style=20, marker_size=1, marker_color=4)
-            graph.Write(f'{part}_purity_efficiency')
+            graph.Write(f'{part}_purity_efficiency_{nsigma}')
 
 
     purity_efficiency.write_csv('/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/purity_efficiency_nsigmaITS.csv')
@@ -242,4 +245,5 @@ if __name__ == '__main__':
     compute_efficiency('Pi', '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_nsigma.root', outdir)
     compute_efficiency('Ka', '/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_nsigma.root', outdir)
 
-    compute_efficiency_purity('/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_nsigma.root', output_file)
+    for nsigma in [1., 2., 3.]:
+        compute_efficiency_purity('/home/galucia/ITS_pid/output/LHC22o_pass7_minBias_small/bethe_bloch_parametrisation_nsigma.root', output_file, nsigma)

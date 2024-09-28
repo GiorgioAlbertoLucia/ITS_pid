@@ -12,11 +12,12 @@
     "internal-dpl-aod-spawner": "",
     "internal-dpl-aod-index-builder": "",
     "timestamp-task": {
+        "fatalOnInvalidTimestamp": "false",
         "verbose": "false",
         "rct-path": "RCT\/Info\/RunInformation",
         "orbit-reset-path": "CTP\/Calib\/OrbitReset",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "isRun2MC": "false"
+        "isRun2MC": "-1"
     },
     "track-propagation": {
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
@@ -101,14 +102,26 @@
         "ITSROFrameEndBorderMargin": "-1",
         "TimeFrameStartBorderMargin": "-1",
         "TimeFrameEndBorderMargin": "-1",
+        "checkRunDurationLimits": "false",
         "processRun2": "false",
         "processRun3": "true"
+    },
+    "tof-signal": {
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "ccdb-timestamp": "-1",
+        "timeShiftCCDBPath": "",
+        "distanceForGoodMatch": "999",
+        "distanceForGoodMatchLowMult": "999",
+        "multThreshold": "0",
+        "enableQaHistograms": "false",
+        "processRun3": "true",
+        "processRun2": "false"
     },
     "event-selection-task": {
         "syst": "pp",
         "muonSelection": "0",
         "maxDiffZvtxFT0vsPV": "1",
-        "isMC": "false",
+        "isMC": "0",
         "TimeIntervalForOccupancyCalculationMin": "-40",
         "TimeIntervalForOccupancyCalculationMax": "100",
         "TimeBinsForOccupancyCalculation": {
@@ -217,7 +230,7 @@
                 "FT0MultZeqs",
                 "FDDMultZeqs",
                 "PVMultZeqs",
-                "MultsExtraMC"
+                "MultMCExtras"
             ],
             "labels_cols": [
                 "Enable"
@@ -269,23 +282,38 @@
         },
         "ccdburl": "http:\/\/alice-ccdb.cern.ch",
         "ccdbpath": "Centrality\/Calibration",
+        "reconstructionPass": "",
         "produceHistograms": "false",
+        "min_pt_globaltrack": "0.150000006",
+        "max_pt_globaltrack": "1e+10",
+        "min_ncluster_its_globaltrack": "5",
+        "min_ncluster_itsib_globaltrack": "1",
         "processRun2": "false",
         "processRun3": "true",
         "processGlobalTrackingCounters": "false",
-        "processMC": "false"
+        "processMC": "false",
+        "processMC2Mults": "false"
     },
     "ft0-corrected-table": "",
-    "tof-signal": {
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+    "tof-event-time": {
+        "inheritFromBaseTask": "true",
+        "ccdb-url": "",
         "ccdb-timestamp": "-1",
-        "timeShiftCCDBPath": "",
-        "distanceForGoodMatch": "999",
-        "distanceForGoodMatchLowMult": "999",
-        "multThreshold": "0",
-        "enableQaHistograms": "false",
-        "processRun3": "true",
-        "processRun2": "false"
+        "minMomentum": "0.5",
+        "maxMomentum": "2",
+        "maxEvTimeTOF": "100000",
+        "sel8TOFEvTime": "false",
+        "maxNtracksInSet": "10",
+        "paramFileName": "",
+        "parametrizationPath": "TOF\/Calib\/Params",
+        "passName": "",
+        "loadResponseFromCCDB": "false",
+        "enableTimeDependentResponse": "false",
+        "fatalOnPassNotAvailable": "true",
+        "processRun2": "false",
+        "processNoFT0": "false",
+        "processFT0": "true",
+        "processOnlyFT0": "false"
     },
     "lambdakzero-preselector": {
         "dIfMCgenerateK0Short": "true",
@@ -593,26 +621,6 @@
         "processRun3": "true",
         "processFindableRun3": "false"
     },
-    "tof-event-time": {
-        "inheritFromBaseTask": "true",
-        "ccdb-url": "",
-        "ccdb-timestamp": "-1",
-        "minMomentum": "0.5",
-        "maxMomentum": "2",
-        "maxEvTimeTOF": "100000",
-        "sel8TOFEvTime": "false",
-        "maxNtracksInSet": "10",
-        "paramFileName": "",
-        "parametrizationPath": "TOF\/Calib\/Params",
-        "passName": "",
-        "loadResponseFromCCDB": "false",
-        "enableTimeDependentResponse": "false",
-        "fatalOnPassNotAvailable": "true",
-        "processRun2": "false",
-        "processNoFT0": "false",
-        "processFT0": "true",
-        "processOnlyFT0": "false"
-    },
     "tof-pid": {
         "inheritFromBaseTask": "true",
         "ccdb-url": "",
@@ -731,10 +739,9 @@
         "processWSlice": "true",
         "processWoSlice": "false"
     },
-    "lambdakzero-initializer": "",
     "lf-tree-creator-cluster-studies": {
         "fillV0": "false",
-        "fillK": "false",
+        "fillK": "true",
         "fillDe": "false",
         "fillHe3": "false",
         "fillPKPPi": "true",
@@ -806,12 +813,13 @@
                 ]
             ]
         },
-        "processDataV0Casc": "false",
+        "processDataV0Casc": "true",
         "processDataNuclei": "false",
-        "processDataPKPi": "true",
+        "processDataPKPi": "false",
         "processMcV0Casc": "false",
         "processMcNuclei": "false"
     },
+    "lambdakzero-initializer": "",
     "lambdakzero-v0-data-link-builder": {
         "processFound": "true",
         "processFindable": "false"

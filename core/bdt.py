@@ -7,6 +7,7 @@ import logging
 import numpy as np
 import polars as pl
 import xgboost as xgb
+from sklearn.metrics import accuracy_score
 import optuna
 import shap
 import matplotlib.pyplot as plt
@@ -499,6 +500,7 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
 
         self.models = [None for _ in range(len(self.train_datasets))]
         for imodel, (train_dataset, validation_dataset) in enumerate(zip(self.train_datasets, self.validation_datasets)):
+            print(f'\nTraining model {imodel}\n')
             #if imodel != 6:
             #    continue
             eval_set = [(self.train_dataset[self.feature_columns], self.train_dataset[self.target_columns]),
@@ -530,39 +532,49 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
 
         return self.models
 
-    def _optuna_objective(self, trial):
-        params = {
-            'verbosity': 0,
-            'objective': 'multi:softprob',
-            'num_class': len(self.train_part_list),
-            'tree_method': 'gpu_hist',
-            'eval_metric': 'auc',
-            'n_jobs': 20,
-            #'early_stopping_rounds': 10,
-            'lambda': trial.suggest_float('lambda', 1e-8, 1.0, log=True),           # L2 regularization term on weights
-            'alpha': trial.suggest_float('alpha', 1e-8, 1.0, log=True),             # L1 regularization term on weights
-            'subsample': trial.suggest_float('subsample', 0.2, 1.0),                # Subsample ratio of the training instances
-            'colsample_bytree': trial.suggest_float('colsample_bytree', 0.2, 1.0),  # Subsample ratio of columns when constructing each tree    
-            'max_depth': trial.suggest_int('max_depth', 2, 6),                      # Maximum depth of a tree
-            'n_estimators': trial.suggest_int('n_estimators', 100, 1500),           # Number of boosting rounds
-            'eta': trial.suggest_float('eta', 1e-8, 1.0, log=True),                 # Boosting learning rate
-            'gamma': trial.suggest_float('gamma', 1e-8, 1.0, log=True),             # Minimum loss reduction required to make a further partition on a leaf node of the tree
-            'grow_policy': trial.suggest_categorical('grow_policy', ['depthwise', 'lossguide']),
-            'min_child_weight': trial.suggest_int('min_child_weight', 1, 300)       # Minimum sum of instance weight (hessian) needed in a child
-        }
+    def _optuna_objective_imodel(self, imodel:int):
+        def _optuna_objective(trial):
+            params = {
+                'verbosity': 0,
+                'objective': 'multi:softprob',
+                'num_class': len(self.train_part_list),
+                'tree_method': 'gpu_hist',
+                #'eval_metric': 'auc',
+                'n_jobs': 20,
+                #'early_stopping_rounds': 10,
+                'lambda': trial.suggest_float('lambda', 1e-8, 1.0, log=True),               # L2 regularization term on weights
+                'alpha': trial.suggest_float('alpha', 1e-8, 1.0, log=True),                 # L1 regularization term on weights
+                'subsample': trial.suggest_float('subsample', 0.2, 1.0),                    # Subsample ratio of the training instances
+                'colsample_bytree': trial.suggest_float('colsample_bytree', 0.2, 1.0),      # Subsample ratio of columns when constructing each tree    
+                'max_depth': trial.suggest_int('max_depth', 2, 6),                          # Maximum depth of a tree
+                'n_estimators': trial.suggest_int('n_estimators', 600, 1500),               # Number of boosting rounds
+                'eta': trial.suggest_float('eta', 1e-8, 1.0, log=True),                     # Boosting learning rate
+                'learning_rate': trial.suggest_float('learning_rate', 1e-8, 1.0, log=True), # Boosting learning rate
+                'gamma': trial.suggest_float('gamma', 1e-8, 1.0, log=True),                 # Minimum loss reduction required to make a further partition on a leaf node of the tree
+                'grow_policy': trial.suggest_categorical('grow_policy', ['depthwise', 'lossguide']),
+                'min_child_weight': trial.suggest_int('min_child_weight', 1, 300)           # Minimum sum of instance weight (hessian) needed in a child
+            }
 
-        model = xgb.XGBRegressor(**params)
-        model.fit(self.train_dataset[self.feature_columns], self.train_dataset[self.target_columns])
-        dtrain = xgb.DMatrix(self.validation_dataset[self.feature_columns], label=self.validation_dataset[self.target_columns])
-        cvResults = xgb.cv(dtrain=dtrain,params=params,nfold=5,metrics='auc',as_pandas=True,early_stopping_rounds=10,num_boost_round=100)
-        return cvResults['test-auc-mean'][-1:].values[0]
+            dtrain = xgb.DMatrix(self.train_datasets[imodel][self.feature_columns], label=self.train_datasets[imodel][self.target_columns])
+            dval = xgb.DMatrix(self.validation_datasets[imodel][self.feature_columns], label=self.validation_datasets[imodel][self.target_columns])
+            model = xgb.XGBClassifier(**params)
+            model.fit(self.train_datasets[imodel][self.feature_columns], self.train_datasets[imodel][self.target_columns], 
+                        eval_set=[(self.train_datasets[imodel][self.feature_columns], self.train_datasets[imodel][self.target_columns]),
+                        (self.validation_datasets[imodel][self.feature_columns], self.validation_datasets[imodel][self.target_columns])],
+                        verbose=False)
+            preds = model.predict(self.validation_datasets[imodel][self.feature_columns])
+            accuracy = accuracy_score(self.validation_datasets[imodel][self.target_columns], preds)
+            return accuracy
+
+        return _optuna_objective
 
     def hyperparameter_optimization(self):
         
         self.hyperparameters_list = [None for _ in range(len(self.train_datasets))]
         for imodel, _ in enumerate(self.train_datasets):
             study = optuna.create_study(direction='maximize')
-            study.optimize(self._optuna_objective, n_trials=100)
+            optuna_objective = self._optuna_objective_imodel(imodel)
+            study.optimize(optuna_objective, n_trials=100)
             print('Number of finished trials: ', len(study.trials))
             print('Best trial:')
             trial = study.best_trial
@@ -594,6 +606,17 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
             ipath = self.cfg_bdt['model_path'].split('.')
             ipath = ipath[0] + f'_{imodel}' + '.' + ipath[1]
             self.models.append(pickle.load(open(ipath, 'rb')))
+
+    def save_output(self):
+        
+        test_df = None
+        for test_dataset in self.test_datasets:
+            if test_df is None:
+                test_df = test_dataset
+            else:
+                test_df = pl.concat([test_df, test_dataset])
+        
+        test_df.write_parquet(self.cfg_bdt['output_file_test'])
 
     @timeit
     def evaluate(self, predict_classes: bool = False):

@@ -83,6 +83,15 @@ class DataHandler(Dataset):
     @property
     def num_particles(self):
         return len(self.part_list)
+    
+    @staticmethod
+    def rms_cl_size(mean, clsize_layers, n_hit_layers):
+        terms = []
+        for clsize_layer in clsize_layers:
+            term = pl.when(clsize_layer > 0).then((clsize_layer - mean)**2).otherwise(0)
+            terms.append(term)
+        rms = (np.sum(terms) / n_hit_layers).sqrt()
+        return rms
 
     def _new_columns(self, rigidity_he:bool=False):
         '''
@@ -103,6 +112,7 @@ class DataHandler(Dataset):
         self.dataset = self.dataset.filter(pl.col('fNClustersIts') > 0)
         self.dataset = self.dataset.with_columns(fMeanItsClSize=((pl.col('fItsClusterSizeL0') + pl.col('fItsClusterSizeL1') + pl.col('fItsClusterSizeL2') + pl.col('fItsClusterSizeL3') + pl.col('fItsClusterSizeL4') + pl.col('fItsClusterSizeL5') + pl.col('fItsClusterSizeL6')) / pl.col('fNClustersIts')))
         self.dataset = self.dataset.with_columns(fClSizeCosL=(pl.col('fMeanItsClSize') * pl.col('fCosL')))
+        self.dataset = self.dataset.with_columns(fRMSClSize=(self.rms_cl_size(pl.col('fMeanItsClSize'), [pl.col(f'fItsClusterSizeL{i}') for i in range(6)], pl.col('fNClustersIts'))))
 
         self.dataset = self.dataset.with_columns(pl.col('fPartID').apply(lambda x: ParticleMasses[self.part_list[x]]).alias('fMass'))
 

@@ -21,9 +21,36 @@ if __name__ == '__main__':
     print(tc.GREEN+tc.BOLD+'Data uploading'+tc.RESET)
     data_handler = DataHandler(infiles, cfg_data_file, tree_name=tree_name, folder_name=folder_name, force_option='AO2D', rigidity_he=True)
     data_handler.dataset.filter(pl.col('fPartID') != 6)
-    #data_handler_he = DataHandler(infiles_he, cfg_data_file, tree_name=tree_name, folder_name=folder_name, force_option='AO2D', rigidity_he=True)
-    #data_handler.dataset = pl.concat([data_handler.dataset, data_handler_he.dataset])
-    data_handler.dataset = data_handler.dataset.filter(pl.col('fPAbs').is_between(0.75, 0.85))
+    data_handler_he = DataHandler(infiles_he, cfg_data_file, tree_name=tree_name, folder_name=folder_name, force_option='AO2D', rigidity_he=False)
+    data_handler_he.dataset = data_handler_he.dataset.filter(pl.col('fPartID') == 6)
+    
+    newcolumns = data_handler.dataset.columns
+    newcolumns.remove('fItsClusterSize')
+    data_handler.dataset = data_handler.dataset[newcolumns]
+    data_handler_he.dataset = data_handler_he.dataset[newcolumns]
+
+    print(data_handler.dataset[['fNClustersIts', 'fMeanItsClSize', 'fClSizeCosL', 'fMass']].describe())
+    print(data_handler_he.dataset[['fNClustersIts', 'fMeanItsClSize', 'fClSizeCosL', 'fMass']].describe())
+    print(data_handler.dataset.dtypes)
+    print(data_handler_he.dataset.dtypes)
+
+    for idx in [0, 4, 17]:
+        data_handler_he.dataset = data_handler_he.dataset.with_columns(pl.col(data_handler_he.dataset.columns[idx]).cast(pl.Float64))
+
+    print(data_handler.dataset.dtypes)
+    print(data_handler_he.dataset.dtypes)
+    
+    data_handler.dataset = pl.concat([data_handler.dataset[newcolumns], data_handler_he.dataset[newcolumns]])
+
+    hist_handler = HistHandler.createInstance(data_handler.dataset) 
+    axis_spec_x = AxisSpec(200, 0, 5, 'All', '; #it{p} (GeV/#it{c}); #LT ITS Cluster size #GT #times #LT cos#lambda #GT; Counts')
+    axis_spec_y = AxisSpec(70, 0, 15, 'All', '; #it{p} (GeV/#it{c}); #LT ITS Cluster size #GT #times #LT cos#lambda #GT; Counts')
+    h2ClSizeCosL = hist_handler.buildTH2('fPAbs', 'fClSizeCosL', axis_spec_x, axis_spec_y)
+    canvas = TCanvas('ch2', 'c', 800, 600)
+    h2ClSizeCosL.Draw('colz')
+    canvas.SaveAs('/home/galucia/ITS_pid/output/cl_size.pdf')
+    
+    data_handler.dataset = data_handler.dataset.filter(pl.col('fPAbs').is_between(1.15, 1.25))
 
     particles = ['Pi', 'Ka', 'Pr', 'De', 'He']
     names = ['#pi', 'K', 'p', 'd', '^{3}He']

@@ -108,7 +108,7 @@
         "syst": "pp",
         "muonSelection": "0",
         "maxDiffZvtxFT0vsPV": "1",
-        "isMC": "false",
+        "isMC": "0",
         "TimeIntervalForOccupancyCalculationMin": "-40",
         "TimeIntervalForOccupancyCalculationMax": "100",
         "TimeBinsForOccupancyCalculation": {
@@ -200,76 +200,6 @@
         "processMcTuneOnData": "false"
     },
     "multiplicity-table": {
-        "doVertexZeq": "1",
-        "fractionOfEvents": "2",
-        "enabledTables": {
-            "labels_rows": [
-                "FV0Mults",
-                "FT0Mults",
-                "FDDMults",
-                "ZDCMults",
-                "TrackletMults",
-                "TPCMults",
-                "PVMults",
-                "MultsExtra",
-                "MultSelections",
-                "FV0MultZeqs",
-                "FT0MultZeqs",
-                "FDDMultZeqs",
-                "PVMultZeqs",
-                "MultsExtraMC"
-            ],
-            "labels_cols": [
-                "Enable"
-            ],
-            "values": [
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ],
-                [
-                    "-1"
-                ]
-            ]
-        },
-        "ccdburl": "http:\/\/alice-ccdb.cern.ch",
-        "ccdbpath": "Centrality\/Calibration",
-        "produceHistograms": "false",
         "processRun2": "false",
         "processRun3": "true",
         "processGlobalTrackingCounters": "false",
@@ -734,10 +664,10 @@
     "lambdakzero-initializer": "",
     "lf-tree-creator-cluster-studies": {
         "fillV0": "false",
-        "fillK": "false",
+        "fillK": "true",
         "fillDe": "false",
         "fillHe3": "false",
-        "fillPKPi": "true",
+        "fillPKPi": "false",
         "smallTable": "false",
         "cfgMaterialCorrection": "0",
         "zVtxMax": "10",
@@ -806,9 +736,9 @@
                 ]
             ]
         },
-        "processDataV0Casc": "false",
+        "processDataV0Casc": "true",
         "processDataNuclei": "false",
-        "processDataPKPi": "true",
+        "processDataPKPi": "false",
         "processMcV0Casc": "false",
         "processMcNuclei": "false"
     },

@@ -77,24 +77,27 @@ def run_classifier(input_files: List[str], input_files_he: List[str], cfg_data_f
     output_file_root = TFile(output_file, 'RECREATE')
     outdir = output_file_root.mkdir('bdt_output')
 
-    train_species = ['Pi', 'Ka', 'Pr', 'De', 'He']
-    #train_handler, test_handler = data_preparation(input_files, output_file_root, cfg_data_file, cfg_output_file, normalize=True, rename_classes=True, force_option='AO2D', split=True, species_selection=[True, train_species], variable_selection=[True, 'fPAbs', 0.3, 1.0], clean_protons=True, oversample_momentum=True, n_samples=int(1e7), oversample=True)
-    train_handler, validation_handler, test_handler = data_preparation_with_he(input_files, input_files_he, outdir, cfg_data_file, cfg_output_file, force_option='AO2D',
+    train_species = ['Pi', 'Ka', 'Pr'] #, 'De', 'He']
+    train_handler, validation_handler, test_handler = data_preparation(input_files, outdir, cfg_data_file, cfg_output_file, force_option='AO2D',
+                                                            #input_files_he=input_files_he,
                                                             normalize=True, 
                                                             rename_classes=True, 
                                                             split=True, 
                                                             species_selection=[True, train_species], 
-                                                            flatten_samples=['fPAbs', 250, 0., 2.5, 500], 
+                                                            variable_selection=[True, 'fPAbs', 0.35, 1.05], 
+                                                            flatten_samples=['fPAbs', 70, 0.35, 1.05, 2000], 
                                                             clean_protons=True, 
                                                             n_samples=None, 
                                                             oversample=False,
-                                                            minimum_hits=5)
+                                                            #minimum_hits=7
+                                                            )
 
     ## Classifier
     cfg_bdt_file = '../config/config_bdt_cls.yml'
     bdt_classifier = BDTClassifierTrainer(cfg_bdt_file, output_file_root)
     bdt_classifier.load_data(train_handler, validation_handler, test_handler, normalized=True)
     print(train_handler.dataset['fPartID'].unique())
+    bdt_classifier.hyperparameter_optimization()
     if train:
         bdt_classifier.train()
         bdt_classifier.save_model()
@@ -116,25 +119,25 @@ def run_classifier_ensemble(input_files: List[str], input_files_he: List[str], c
     output_file_root = TFile(output_file, 'RECREATE')
     outdir = output_file_root.mkdir('bdt_output')
 
-    train_species = ['Pi', 'Ka', 'Pr', 'De', 'He']
-    train_handler, validation_handler, test_handler = data_preparation(input_files, output_file_root, cfg_data_file, cfg_output_file, input_files_he=input_files_he, 
+    train_species = ['Pi', 'Ka', 'Pr']#, 'De', 'He']
+    train_handler, validation_handler, test_handler = data_preparation(input_files, output_file_root, cfg_data_file, cfg_output_file, #input_files_he=input_files_he, 
                                                             force_option='AO2D',
-                                                            normalize=True, 
+                                                            normalize=False, 
                                                             rename_classes=True, 
                                                             split=True, 
                                                             species_selection=[True, train_species], 
                                                             variable_selection=[True, 'fPAbs', 0.35, 1.05], 
-                                                            flatten_samples=['fPAbs', 70, 0.35, 1.05, 500], 
+                                                            flatten_samples=['fPAbs', 70, 0.35, 1.05, 2000], 
                                                             clean_protons=True, 
                                                             n_samples=None, 
                                                             oversample=False,
-                                                            #minimum_hits=5
+                                                            minimum_hits=7
                                                             )
 
     ## Classifier
     cfg_bdt_file = '../config/config_bdt_cls.yml'
     bdt_classifier_ensemble = BDTClassifierEnsembleTrainer(cfg_bdt_file, output_file_root, momentum_bins=[0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95, 1.05])
-    bdt_classifier_ensemble.load_data(train_handler, validation_handler, test_handler, normalized=True)
+    bdt_classifier_ensemble.load_data(train_handler, validation_handler, test_handler, normalized=False)
     print(train_handler.dataset['fPartID'].unique())
     #bdt_classifier_ensemble.hyperparameter_optimization()
     if train:
@@ -146,7 +149,7 @@ def run_classifier_ensemble(input_files: List[str], input_files_he: List[str], c
     bdt_classifier_ensemble.evaluate()
     bdt_classifier_ensemble.prepare_for_plots()
 
-    bdt_classifier_ensemble.save_output()
+    #bdt_classifier_ensemble.save_output()
     bdt_classifier_ensemble.draw_class_scores()
     bdt_classifier_ensemble.draw_part_id_distribution()
     #bdt_classifier_ensemble.draw_feature_importance()
@@ -158,7 +161,7 @@ def run_classifier_ensemble(input_files: List[str], input_files_he: List[str], c
 
 if __name__ == '__main__':
     
-    from data_preparation import data_preparation, data_preparation_with_he
+    from data_preparation import data_preparation
 
     # Configure logging
     os.remove("/home/galucia/ITS_pid/output/output_bdt.log")
@@ -172,6 +175,7 @@ if __name__ == '__main__':
     cfg_output_file = '../config/config_outputs.yml'
 
     #run_regressor(input_files, input_files_he, input_files_pkpi, cfg_data_file, cfg_output_file, output_file='../output/bdt_beta_05.root', train=True)
-    #run_classifier(input_files, input_files_he, cfg_data_file, cfg_output_file, output_file='../output/bdt_cls_20082024.root', train=False)
-    run_classifier_ensemble(input_files, input_files_he, cfg_data_file, cfg_output_file, output_file='../output/bdt_cls_22082024_he.root', train=True)
+    #run_classifier(input_files, input_files_he, cfg_data_file, cfg_output_file, output_file='../output/bdt_cls_30082024_single.root', train=True)
+    run_classifier_ensemble(input_files, input_files_he, cfg_data_file, cfg_output_file, output_file='../output/bdt_cls_11092024_7hits2.root', train=True)
+                                                                                                     #'../output/bdt_cls_30082024.root', train=True)
 

@@ -6,7 +6,7 @@
 visualize: True
 
 # Particle species
-species: [ 'Unidentified', 'El',
+species: ['Unidentified', 'El',
           'Pi', 'Ka', 'Pr', 
           'De', 'He'
           ]
@@ -37,7 +37,7 @@ num_threads: 1
 num_epochs: 50
 learning_rate: 0.01
 batch_size: 32
-test_size: 0.2
-validation_size: 0.05
+test_size: 0.3
+validation_size: 0.5
 
 # data preparation 

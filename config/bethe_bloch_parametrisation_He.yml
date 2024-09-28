@@ -21,12 +21,12 @@ p:
           type: "TH2F",
           particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
         }
-  xMinFit: 1.4
+  xMinFit: 0.9
   xMaxFit: 3.5
   yMinFit: 0
   yMaxFit: 15
   xMinDoubleFit: 0
-  xMaxDoubleFit: 1.5
+  xMaxDoubleFit: 1.45
 
   signalFit:
     #function: '[0] * [2] * exp( - 0.5 * ( (x - [1]) / [2] )^2 ) * ( 1 + TMath::Erf( [3] * (x - [1]) / [2] ) )' # Crystal Ball
@@ -45,7 +45,7 @@ p:
         1: {
           init: 8,
           opt: 'limit',
-          limits: [6, 10]
+          limits: [4, 10]
         },
         2: {
           init: 0.6,

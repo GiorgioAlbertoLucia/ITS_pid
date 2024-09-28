@@ -6,9 +6,9 @@ from framework.src.plotter import Plotter
 
 if __name__ == '__main__':
 
-    #with open('../plot_config/cfg_efficiency_purity.yml', 'r') as f:
+    with open('../plot_config/cfg_efficiency_purity.yml', 'r') as f:
     #with open('../plot_config/cfg_clsize_vs_betagamma.yml', 'r') as f:
-    with open('../plot_config/cfg_clsize_vs_p.yml', 'r') as f:
+    #with open('../plot_config/cfg_clsize_vs_p.yml', 'r') as f:
     #with open('../plot_config/cfg_rocs.yml', 'r') as f:
         config = yaml.safe_load(f)
 

@@ -1,26 +1,27 @@
 all_species: ['Unidentified', 'El', 'Pi', 'Ka', 'Pr', 'De', 'He']
-train_species: ['Pi', 'Ka', 'Pr', 'De', 'He']
-features: [ #'fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fItsClusterSizeL3', 'fItsClusterSizeL4', 
+train_species: ['Pi', 'Ka', 'Pr'] #, 'De', 'He']
+features: [ 'fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fItsClusterSizeL3', 'fItsClusterSizeL4', 
             'fItsClusterSizeL5', 'fItsClusterSizeL6', 
             'fEta', 'fPhi', 'fCosL', 
             'fPAbs', 'fMeanItsClSize', 'fClSizeCosL']
 target: 'fPartID'
 
-load_from_optuna: True
+load_from_optuna: False
 optuna_hyperparameters_path: '/home/galucia/ITS_pid/models/bdt_cls_optuna.pkl'
 hyperparameters:
   max_depth: 5
-  learning_rate: 0.005
+  eta: 0.2
+  learning_rate: 0.2
   n_estimators: 800
   tree_method: 'gpu_hist'
   #eval_metric: 'rmse'
   booster: gbtree
-  gamma: 0
-  min_child_weight: 9
+  gamma: 0.27
+  min_child_weight: 11
   subsample: 0.8
-  colsample_bytree: 0.9
-  reg_alpha: 0.5
-  reg_lambda: 0.5
+  colsample_bytree: 0.95
+  alpha: 0.000002
+  lambda: 0.00004
   n_jobs: 20
   #device: 'cuda'
   random_state: 42
@@ -30,14 +31,14 @@ hyperparameters:
 kwargs_fit:
   early_stopping_rounds: 10
 
-#model_path: '/home/galucia/ITS_pid/models/bdt_cls.pkl'
+model_path: '/home/galucia/ITS_pid/models/bdt_cls.pkl'
 #output_file_train: '/home/galucia/ITS_pid/output/bdt_cls_train.parquet'
 #output_file_test: '/home/galucia/ITS_pid/output/bdt_cls_test.parquet'
 
 #model_path: '/home/galucia/ITS_pid/models/bdt_cls_ensemble.pkl'
-model_path: '/home/galucia/ITS_pid/models/bdt_cls_ensemble_he.pkl'
-output_file_train: '/home/galucia/ITS_pid/output/bdt_cls_ensemble_train_he.parquet'
-output_file_test: '/home/galucia/ITS_pid/output/bdt_cls_ensemble_test_he.parquet'
+#model_path: '/home/galucia/ITS_pid/models/bdt_cls_ensemble_7hits.pkl'
+output_file_train: '/home/galucia/ITS_pid/output/bdt_cls_ensemble_train_7hits.parquet'
+output_file_test: '/home/galucia/ITS_pid/output/bdt_cls_ensemble_test_7hits.parquet'
 
 # plots
 betaml_plot: {

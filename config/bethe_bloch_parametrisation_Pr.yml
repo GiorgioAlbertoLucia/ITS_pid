@@ -94,10 +94,27 @@ p:
                 xMax: 1.05,
                 xLabel: "#it{p} (GeV/#it{c})",
                 yVariable: "fNSigmaPr",
-                nYBins: 200,
+                nYBins: 500,
                 yMin: -10,
                 yMax: 10,
                 yLabel: "n #sigma_{ITS}",
+                type: "TH2F",
+                particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
+               }
+
+  plot_sigma: {
+                name: "sigma_vs_p",
+                title: "#sigma vs #it{p}; #it{p} (GeV/#it{c}); n #sigma; Counts",
+                xVariable: "fPAbs",
+                nXBins: 70,
+                xMin: 0.35,
+                xMax: 1.05,
+                xLabel: "#it{p} (GeV/#it{c})",
+                yVariable: "fSigmaClSizeCosL",
+                nYBins: 50,
+                yMin: -1,
+                yMax: 1,
+                yLabel: "#sigma_{ITS}",
                 type: "TH2F",
                 particle: ["all", "El", "Pi", "Ka", "Pr", "De", "He"],
                }
