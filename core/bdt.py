@@ -45,8 +45,8 @@ class BDTTrainer:
         self.validation_dataset_plots = None
         self.test_dataset = None
         self.test_dataset_plots = None
-        self.train_part_list = None
-        self.test_part_list = None
+        self.train_id_part_map = None
+        self.test_id_part_map = None
         self.feature_columns = None
         self.target_columns = None
 
@@ -69,8 +69,8 @@ class BDTTrainer:
         self.validation_dataset_plots = validation_handler.dataset
         self.test_dataset_plots = test_handler.dataset
         print('BDT Trainer: Data loaded')
-        self.train_part_list = train_handler.part_list
-        self.test_part_list = test_handler.part_list
+        self.train_id_part_map = train_handler.id_part_map ### here
+        self.test_id_part_map = test_handler.id_part_map ### here
         self.feature_columns = self.cfg_bdt['features']
         self.target_columns = self.cfg_bdt['target']
     
@@ -91,10 +91,10 @@ class BDTTrainer:
         self.train_hist_handlers = {'all': HistHandler.createInstance(self.train_dataset_plots)}
         self.validation_hist_handlers = {'all': HistHandler.createInstance(self.validation_dataset_plots)}
         self.test_hist_handlers = {'all': HistHandler.createInstance(self.test_dataset_plots)}
-        for part in self.train_part_list:
-            self.train_hist_handlers[part] = HistHandler.createInstance(self.train_dataset_plots.filter(pl.col('fPartID') == self.train_part_list.index(part)))
-            self.validation_hist_handlers[part] = HistHandler.createInstance(self.validation_dataset_plots.filter(pl.col('fPartID') == self.train_part_list.index(part)))
-            self.test_hist_handlers[part] = HistHandler.createInstance(self.test_dataset_plots.filter(pl.col('fPartID') == self.test_part_list.index(part)))
+        for ipart in self.train_id_part_map.keys():
+            self.train_hist_handlers[part] = HistHandler.createInstance(self.train_dataset_plots.filter(pl.col('fPartID') == ipart))
+            self.validation_hist_handlers[part] = HistHandler.createInstance(self.validation_dataset_plots.filter(pl.col('fPartID') == ipart))
+            self.test_hist_handlers[part] = HistHandler.createInstance(self.test_dataset_plots.filter(pl.col('fPartID') == ipart))
 
     def draw_beta_distribution(self):
         cfg_plot_ml = self.cfg_bdt['betaml_plot']
@@ -286,6 +286,7 @@ class BDTRegressorTrainer(BDTTrainer):
             hist_test.Write(cfg_plot['axisSpecX']['name']+f'_test_{part}')
 
 class BDTClassifierTrainer(BDTTrainer):
+    
     @timeit
     def train(self):
         print(tc.BOLD+tc.GREEN+'Training the BDT Classifier'+tc.RESET)
@@ -316,24 +317,24 @@ class BDTClassifierTrainer(BDTTrainer):
             self.test_dataset_plots = self.test_dataset_plots.with_columns(fPartIDML=test_predictions)
         else:
             train_predictions = self.model.predict_proba(self.train_dataset[self.feature_columns])
-            for ipart in range(len(self.train_part_list)):
-                self.train_dataset = self.train_dataset.with_columns(pl.Series(values=train_predictions[:, ipart], name=f'fProbML{self.train_part_list[ipart]}'))
-                self.train_dataset_plots = self.train_dataset_plots.with_columns(pl.Series(values=train_predictions[:, ipart], name=f'fProbML{self.train_part_list[ipart]}'))
+            for ipart, part in self.train_id_part_map.items():
+                self.train_dataset = self.train_dataset.with_columns(pl.Series(values=train_predictions[:, ipart], name=f'fProbML{part}'))
+                self.train_dataset_plots = self.train_dataset_plots.with_columns(pl.Series(values=train_predictions[:, ipart], name=f'fProbML{part}'))
             validation_predictions = self.model.predict_proba(self.validation_dataset[self.feature_columns])
-            for ipart in range(len(self.train_part_list)):
-                self.validation_dataset = self.validation_dataset.with_columns(pl.Series(values=validation_predictions[:, ipart], name=f'fProbML{self.train_part_list[ipart]}'))
-                self.validation_dataset_plots = self.validation_dataset_plots.with_columns(pl.Series(values=validation_predictions[:, ipart], name=f'fProbML{self.train_part_list[ipart]}'))
+            for ipart, part in self.train_id_part_map.items():
+                self.validation_dataset = self.validation_dataset.with_columns(pl.Series(values=validation_predictions[:, ipart], name=f'fProbML{part}'))
+                self.validation_dataset_plots = self.validation_dataset_plots.with_columns(pl.Series(values=validation_predictions[:, ipart], name=f'fProbML{ipart}'))
             test_predictions = self.model.predict_proba(self.test_dataset[self.feature_columns])
-            for ipart in range(len(self.test_part_list)):
-                self.test_dataset = self.test_dataset.with_columns(pl.Series(values=test_predictions[:, ipart], name=f'fProbML{self.test_part_list[ipart]}'))
-                self.test_dataset_plots = self.test_dataset_plots.with_columns(pl.Series(values=test_predictions[:, ipart], name=f'fProbML{self.test_part_list[ipart]}'))
+            for ipart, part in self.test_id_part_map.items():
+                self.test_dataset = self.test_dataset.with_columns(pl.Series(values=test_predictions[:, ipart], name=f'fProbML{part}'))
+                self.test_dataset_plots = self.test_dataset_plots.with_columns(pl.Series(values=test_predictions[:, ipart], name=f'fProbML{part}'))
 
     def draw_class_scores(self):
         cfg_plot = self.cfg_bdt['class_scores_plot']
         axisSpecX = AxisSpec.from_dict(cfg_plot['axisSpecX'])
         axisSpecY = AxisSpec.from_dict(cfg_plot['axisSpecY'])
 
-        for predicted_class in self.train_part_list:
+        for predicted_class in self.train_id_part_map.values():
             for part, train_handler, validation_handler, test_handler in zip(self.train_hist_handlers.keys(), self.train_hist_handlers.values(), self.validation_hist_handlers.values(), self.test_hist_handlers.values()):
                 
                 axisSpecX.name = cfg_plot['axisSpecX']['name']+f'_train_{part}_predas_{predicted_class}'
@@ -366,50 +367,78 @@ class BDTClassifierTrainer(BDTTrainer):
             hist_validation.Write()
             hist_test.Write()   
 
-    def draw_efficiency_purity_vs_momentum(self, pmin, pmax, pstep):
-        cfg_plot = self.cfg_bdt['efficiency_purity_plot']
-        axisSpecX = AxisSpec.from_dict(cfg_plot['axisSpecX'])
-        axisSpecY = AxisSpec.from_dict(cfg_plot['axisSpecY'])
+    def draw_efficiency_purity(self, momentum_bins: np.array):
+        '''
+            Calculate efficiency and purity per momentum bin
 
-        for part in self.cfg_bdt['train_species']:
-            rates = pl.DataFrame({
-                'p': pl.Series(values=[], dtype=pl.Float64),
-                'eff': pl.Series(values=[], dtype=pl.Float64),
-                'seff': pl.Series(values=[], dtype=pl.Float64),
-                'pur': pl.Series(values=[], dtype=pl.Float64),
-                'spur': pl.Series(values=[], dtype=pl.Float64)
-            })
+            Parameters
+            ----------
+            input_file (str): input file
+            output_file (str): output file
 
-            for ibin, p in enumerate(np.arange(pmin, pmax, pstep)):
-                tp = self.train_dataset.filter((pl.col('fPartID') == self.cfg_bdt['train_species'].index(part)) & (pl.col('fPartIDML') == self.cfg_bdt['train_species'].index(part)) & (pl.col('fP').is_between(pmin+pstep*ibin, pmin+pstep*(ibin+1)))).shape[0]
-                fp = self.train_dataset.filter((pl.col('fPartID') != self.cfg_bdt['train_species'].index(part)) & (pl.col('fPartIDML') == self.cfg_bdt['train_species'].index(part)) & (pl.col('fP').is_between(pmin+pstep*ibin, pmin+pstep*(ibin+1)))).shape[0]
-                tn = self.train_dataset.filter((pl.col('fPartID') != self.cfg_bdt['train_species'].index(part)) & (pl.col('fPartIDML') != self.cfg_bdt['train_species'].index(part)) & (pl.col('fP').is_between(pmin+pstep*ibin, pmin+pstep*(ibin+1)))).shape[0]
-                fn = self.train_dataset.filter((pl.col('fPartID') == self.cfg_bdt['train_species'].index(part)) & (pl.col('fPartIDML') != self.cfg_bdt['train_species'].index(part)) & (pl.col('fP').is_between(pmin+pstep*ibin, pmin+pstep*(ibin+1)))).shape[0]
+        '''
 
-                eff = tp / (tp + fn) if tp + fn > 0 else 0.
-                pur = tp / (tp + fp) if tp + fp > 0 else 0.
-                
-                results = {
-                    'p': p,
-                    'eff': eff,
-                    'seff': (np.sqrt(eff * (1 - eff)) / (tp + fn)) if tp + fn > 0 else 0.,
-                    'pur': pur,
-                    'spur': np.sqrt(pur * (1 - pur)) / (tp + fp) if tp + fp > 0 else 0.
-                }
+        roc_data = pl.DataFrame({'particle': pl.Series(values=[], dtype=str),
+                                 'momentum': pl.Series(values=[], dtype=pl.Float32),
+                                 'threshold': pl.Series(values=[], dtype=pl.Float32),
+                                 'efficiency': pl.Series(values=[], dtype=pl.Float32),
+                                 'purity': pl.Series(values=[], dtype=pl.Float32)})
 
-                rates = pl.concat([rates, pl.DataFrame(results)])
-            
-            eff_pur = TMultiGraph(f'eff_pur_{part}', f'Efficiency & Purity {part}; #it{{p}} (GeV/#it{{c}}); Purity and Efficiency')
-            train_graph_handler = GraphHandler(rates)
-            efficiency = train_graph_handler.createTGraphErrors('p', 'eff', 0, 'seff')
-            obj_setter(efficiency, name=f'efficiency_{part}', title=f'Efficiency {part}; #it{{p}} (GeV/#it{{c}}); Efficiency', marker_color=kOrange, marker_style=20, marker_size=1)
-            eff_pur.Add(efficiency)
-            purity = train_graph_handler.createTGraphErrors('p', 'pur', 0, 'spur')
-            obj_setter(purity, name=f'purity_{part}', title=f'Purity {part}; #it{{p}} (GeV/#it{{c}}); Purity', marker_color=kCyan-3, marker_style=20, marker_size=1)
-            eff_pur.Add(purity)
+        test_part_id_map = {part: ipart for ipart, part in self.test_id_part_map.items()}
 
-            self.output_file.cd()
-            eff_pur.Write()
+        for momentum_bin in range(len(momentum_bins)):
+
+            data_bin = self.test_dataset_plots.filter((pl.col('fPAbs').is_between(momentum_bins[momentum_bin], momentum_bins[momentum_bin+1])))
+
+            for particle in test_part_id_map.keys():
+
+                other_particles = [part for part in test_part_id_map.keys() if part != particle]
+                for th in np.linspace(0.0, 1.0, 30):
+
+                    tp = data_bin.filter((pl.col(f'fProbML{particle}') > th) & (pl.col('fPartID') == test_part_id_map[particle])).shape[0]
+                    fps = [data_bin.filter((pl.col(f'fProbML{particle}') > th) & (pl.col('fPartID') == test_part_id_map[other_particle])).shape[0] for other_particle in other_particles]
+                    fn = data_bin.filter((pl.col(f'fProbML{particle}') < th) & (pl.col('fPartID') == test_part_id_map[particle])).shape[0]
+                    tns = [data_bin.filter((pl.col(f'fProbML{particle}') < th) & (pl.col('fPartID') == test_part_id_map[other_particle])).shape[0] for other_particle in other_particles]
+
+
+                    eff = tp / (tp + fn) if (tp + fn) > 0 else -1.
+                    if (tp + fn) < 0:
+                        pur = -1.
+                    else:
+                        den = tp / (tp + fn)
+                        for fp, tn in zip(fps, tns):
+                            if fp + tn > 0:
+                                den = den + fp / (fp + tn) 
+                        if den > 0:
+                            pur = tp / (tp + fn) / den
+                        else:
+                            pur = -1.
+
+                    roc_data_tmp = pl.DataFrame({'particle': pl.Series([particle], dtype=str),
+                                                 'momentum': pl.Series([momentum_bins[momentum_bin]], dtype=pl.Float32),
+                                                 'threshold': pl.Series([th], dtype=pl.Float32),
+                                                 'efficiency': pl.Series([eff], dtype=pl.Float32),
+                                                 'purity': pl.Series([pur], dtype=pl.Float32)})
+
+                    if len(roc_data) == 0:
+                        roc_data = roc_data_tmp
+                    else:
+                        roc_data = pl.concat([roc_data, roc_data_tmp])
+
+                roc_data = roc_data.filter((pl.col('purity') > -0.5) & (pl.col('efficiency') > -0.5))
+                graph_handler = GraphHandler(roc_data)
+                roc = graph_handler.createTGraph('purity', 'efficiency')
+                if roc is not None:
+                    obj_setter(roc, name=f'roc_{momentum_bins[momentum_bin]}_{particle}', title=f'ROC curve for {particle} at {momentum_bins[momentum_bin]} GeV/#it{{c}}; Purity; Efficiency', marker_color=4, marker_style=20)
+                    self.output_file.cd()
+                    roc.Write()
+
+                # reset the dataframe
+                roc_data = pl.DataFrame({'particle': pl.Series(values=[], dtype=str),
+                                 'momentum': pl.Series(values=[], dtype=pl.Float32),
+                                 'threshold': pl.Series(values=[], dtype=pl.Float32),
+                                 'efficiency': pl.Series(values=[], dtype=pl.Float32),
+                                 'purity': pl.Series(values=[], dtype=pl.Float32)})
 
 class BDTClassifierEnsembleTrainer(BDTTrainer):
     
@@ -428,7 +457,6 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
         self.outdirs = []
         self.hyperparameters_list = []
 
-        
     def slice_datasets(self):
         
         for ibin, _ in enumerate(self.momentum_bins):
@@ -493,14 +521,13 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
         # Return the mean focal loss and the name of the metric
         return np.mean(loss)
 
-
     @timeit
     def train(self):
         print(tc.BOLD+tc.GREEN+'Training the BDT Classifier'+tc.RESET)
 
         self.models = [None for _ in range(len(self.train_datasets))]
         for imodel, (train_dataset, validation_dataset) in enumerate(zip(self.train_datasets, self.validation_datasets)):
-            print(f'\nTraining model {imodel}\n')
+            print(tc.GREEN+'[INFO]: '+tc.RESET+f'Training model {imodel}')
             #if imodel != 6:
             #    continue
             eval_set = [(self.train_dataset[self.feature_columns], self.train_dataset[self.target_columns]),
@@ -527,8 +554,6 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
 
             self.models[imodel] = model
             self.save_model(imodel)
-        
-        #self.save_models()
 
         return self.models
 
@@ -537,7 +562,7 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
             params = {
                 'verbosity': 0,
                 'objective': 'multi:softprob',
-                'num_class': len(self.train_part_list),
+                'num_class': len(self.train_id_part_map),
                 'tree_method': 'gpu_hist',
                 #'eval_metric': 'auc',
                 'n_jobs': 20,
@@ -640,17 +665,17 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
     def predict_scores(self):
         for imomentum, model in enumerate(self.models):
             train_predictions = model.predict_proba(self.train_datasets[imomentum][self.feature_columns])
-            for ipart in range(len(self.train_part_list)):
-                self.train_datasets[imomentum] = self.train_datasets[imomentum].with_columns(pl.Series(values=train_predictions[:, ipart], name=f'fProbML{self.train_part_list[ipart]}'))
-                self.train_datasets_plots[imomentum] = self.train_datasets_plots[imomentum].with_columns(pl.Series(values=train_predictions[:, ipart], name=f'fProbML{self.train_part_list[ipart]}'))
+            for ipart, part in self.train_id_part_map.items():
+                self.train_datasets[imomentum] = self.train_datasets[imomentum].with_columns(pl.Series(values=train_predictions[:, ipart], name=f'fProbML{part}'))
+                self.train_datasets_plots[imomentum] = self.train_datasets_plots[imomentum].with_columns(pl.Series(values=train_predictions[:, ipart], name=f'fProbML{part}'))
             validation_predictions = model.predict_proba(self.validation_datasets[imomentum][self.feature_columns])
-            for ipart in range(len(self.train_part_list)):
-                self.validation_datasets[imomentum] = self.validation_datasets[imomentum].with_columns(pl.Series(values=validation_predictions[:, ipart], name=f'fProbML{self.train_part_list[ipart]}'))
-                self.validation_datasets_plots[imomentum] = self.validation_datasets_plots[imomentum].with_columns(pl.Series(values=validation_predictions[:, ipart], name=f'fProbML{self.train_part_list[ipart]}'))
+            for ipart, part in self.train_id_part_map.items():
+                self.validation_datasets[imomentum] = self.validation_datasets[imomentum].with_columns(pl.Series(values=validation_predictions[:, ipart], name=f'fProbML{part}'))
+                self.validation_datasets_plots[imomentum] = self.validation_datasets_plots[imomentum].with_columns(pl.Series(values=validation_predictions[:, ipart], name=f'fProbML{part}'))
             test_predictions = model.predict_proba(self.test_datasets[imomentum][self.feature_columns])
-            for ipart in range(len(self.test_part_list)):
-                self.test_datasets[imomentum] = self.test_datasets[imomentum].with_columns(pl.Series(values=test_predictions[:, ipart], name=f'fProbML{self.test_part_list[ipart]}'))
-                self.test_datasets_plots[imomentum] = self.test_datasets_plots[imomentum].with_columns(pl.Series(values=test_predictions[:, ipart], name=f'fProbML{self.test_part_list[ipart]}'))
+            for ipart, part in self.test_id_part_map.items():
+                self.test_datasets[imomentum] = self.test_datasets[imomentum].with_columns(pl.Series(values=test_predictions[:, ipart], name=f'fProbML{part}'))
+                self.test_datasets_plots[imomentum] = self.test_datasets_plots[imomentum].with_columns(pl.Series(values=test_predictions[:, ipart], name=f'fProbML{part}'))
 
     def prepare_for_plots(self):
         self.train_hist_handlers = [{'all': HistHandler.createInstance(train_dataset_plots)} for train_dataset_plots in self.train_datasets_plots]
@@ -658,17 +683,17 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
         self.test_hist_handlers = [{'all': HistHandler.createInstance(test_dataset_plots)} for test_dataset_plots in self.test_datasets_plots]
         for imomentum, _ in enumerate(self.train_hist_handlers):
             self.outdirs.append(self.output_file.mkdir(f'bin_{imomentum}'))
-            for part in self.train_part_list:
-                self.train_hist_handlers[imomentum][part] = HistHandler.createInstance(self.train_datasets_plots[imomentum].filter(pl.col('fPartID') == self.train_part_list.index(part)))
-                self.validation_hist_handlers[imomentum][part] = HistHandler.createInstance(self.validation_datasets_plots[imomentum].filter(pl.col('fPartID') == self.train_part_list.index(part)))
-                self.test_hist_handlers[imomentum][part] = HistHandler.createInstance(self.test_datasets_plots[imomentum].filter(pl.col('fPartID') == self.test_part_list.index(part)))
-
+            for ipart, part in self.train_id_part_map.items():
+                self.train_hist_handlers[imomentum][part] = HistHandler.createInstance(self.train_datasets_plots[imomentum].filter(pl.col('fPartID') == ipart))
+                self.validation_hist_handlers[imomentum][part] = HistHandler.createInstance(self.validation_datasets_plots[imomentum].filter(pl.col('fPartID') == ipart))
+                self.test_hist_handlers[imomentum][part] = HistHandler.createInstance(self.test_datasets_plots[imomentum].filter(pl.col('fPartID') == ipart))   
+                
     def draw_class_scores(self):
         cfg_plot = self.cfg_bdt['class_scores_plot_th1']
         axisSpecX = AxisSpec.from_dict(cfg_plot['axisSpecX'])
         
         for imomentum, _ in enumerate(self.train_hist_handlers):
-            for predicted_class in self.train_part_list:
+            for predicted_class in self.train_id_part_map.values():
                 for part in self.train_hist_handlers[imomentum].keys():
 
                     axisSpecX.name = cfg_plot['axisSpecX']['name']+f'_train_{part}_predas_{predicted_class}'
@@ -709,7 +734,6 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
 
             plt.close('all')
 
-
     def draw_part_id_distribution(self):
         cfg_plot = self.cfg_bdt['part_id_plot']
         axisSpecX = AxisSpec.from_dict(cfg_plot['axisSpecX'])
@@ -741,52 +765,79 @@ class BDTClassifierEnsembleTrainer(BDTTrainer):
             hist_validation = validation_handler.buildTH2('fPartID', 'fPartIDML ', axisSpecX, axisSpecY)
             hist_test = test_handler.buildTH2('fPartID', 'fPartIDML ', axisSpecX, axisSpecY)
 
-            output_file.cd()
+            self.output_file.cd()
             hist_train.Write()
             hist_validation.Write()
             hist_test.Write()   
 
-    def draw_efficiency_purity_vs_momentum(self, pmin, pmax, pstep):
-        cfg_plot = self.cfg_bdt['efficiency_purity_plot']
-        axisSpecX = AxisSpec.from_dict(cfg_plot['axisSpecX'])
-        axisSpecY = AxisSpec.from_dict(cfg_plot['axisSpecY'])
+    def draw_efficiency_purity(self):
+        '''
+            Calculate efficiency and purity per momentum bin
 
-        for part in self.cfg_bdt['train_species']:
-            rates = pl.DataFrame({
-                'p': pl.Series(values=[], dtype=pl.Float64),
-                'eff': pl.Series(values=[], dtype=pl.Float64),
-                'seff': pl.Series(values=[], dtype=pl.Float64),
-                'pur': pl.Series(values=[], dtype=pl.Float64),
-                'spur': pl.Series(values=[], dtype=pl.Float64)
-            })
+            Parameters
+            ----------
+            input_file (str): input file
+            output_file (str): output file
+        '''
 
-            for ibin, p in enumerate(np.arange(pmin, pmax, pstep)):
-                tp = self.train_dataset.filter((pl.col('fPartID') == self.cfg_bdt['train_species'].index(part)) & (pl.col('fPartIDML') == self.cfg_bdt['train_species'].index(part)) & (pl.col('fP').is_between(pmin+pstep*ibin, pmin+pstep*(ibin+1)))).shape[0]
-                fp = self.train_dataset.filter((pl.col('fPartID') != self.cfg_bdt['train_species'].index(part)) & (pl.col('fPartIDML') == self.cfg_bdt['train_species'].index(part)) & (pl.col('fP').is_between(pmin+pstep*ibin, pmin+pstep*(ibin+1)))).shape[0]
-                tn = self.train_dataset.filter((pl.col('fPartID') != self.cfg_bdt['train_species'].index(part)) & (pl.col('fPartIDML') != self.cfg_bdt['train_species'].index(part)) & (pl.col('fP').is_between(pmin+pstep*ibin, pmin+pstep*(ibin+1)))).shape[0]
-                fn = self.train_dataset.filter((pl.col('fPartID') == self.cfg_bdt['train_species'].index(part)) & (pl.col('fPartIDML') != self.cfg_bdt['train_species'].index(part)) & (pl.col('fP').is_between(pmin+pstep*ibin, pmin+pstep*(ibin+1)))).shape[0]
+        roc_data = pl.DataFrame({'particle': pl.Series(values=[], dtype=str),
+                                 'momentum': pl.Series(values=[], dtype=pl.Float32),
+                                 'threshold': pl.Series(values=[], dtype=pl.Float32),
+                                 'efficiency': pl.Series(values=[], dtype=pl.Float32),
+                                 'purity': pl.Series(values=[], dtype=pl.Float32)})
 
-                eff = tp / (tp + fn) if tp + fn > 0 else 0.
-                pur = tp / (tp + fp) if tp + fp > 0 else 0.
-                
-                results = {
-                    'p': p,
-                    'eff': eff,
-                    'seff': (np.sqrt(eff * (1 - eff)) / (tp + fn)) if tp + fn > 0 else 0.,
-                    'pur': pur,
-                    'spur': np.sqrt(pur * (1 - pur)) / (tp + fp) if tp + fp > 0 else 0.
-                }
+        test_part_id_map = {part: ipart for ipart, part in self.test_id_part_map.items()}
 
-                rates = pl.concat([rates, pl.DataFrame(results)])
-            
-            eff_pur = TMultiGraph(f'eff_pur_{part}', f'Efficiency & Purity {part}; #it{{p}} (GeV/#it{{c}}); Purity and Efficiency')
-            train_graph_handler = GraphHandler(rates)
-            efficiency = train_graph_handler.createTGraphErrors('p', 'eff', 0, 'seff')
-            obj_setter(efficiency, name=f'efficiency_{part}', title=f'Efficiency {part}; #it{{p}} (GeV/#it{{c}}); Efficiency', marker_color=kOrange, marker_style=20, marker_size=1)
-            eff_pur.Add(efficiency)
-            purity = train_graph_handler.createTGraphErrors('p', 'pur', 0, 'spur')
-            obj_setter(purity, name=f'purity_{part}', title=f'Purity {part}; #it{{p}} (GeV/#it{{c}}); Purity', marker_color=kCyan-3, marker_style=20, marker_size=1)
-            eff_pur.Add(purity)
+        out_dir = self.output_file.mkdir('roc_curves')
 
-            self.output_file.cd()
-            eff_pur.Write()
+        for imomentum, test_dataset in enumerate(self.test_datasets):
+
+            for particle in test_part_id_map.keys():
+
+                other_particles = [part for part in test_part_id_map.keys() if part != particle]
+                for th in np.linspace(0.0, 1.0, 30):
+
+                    tp = test_dataset.filter((pl.col(f'fProbML{particle}') > th) & (pl.col('fPartID') == test_part_id_map[particle])).shape[0]
+                    fps = [test_dataset.filter((pl.col(f'fProbML{particle}') > th) & (pl.col('fPartID') == test_part_id_map[other_particle])).shape[0] for other_particle in other_particles]
+                    fn = test_dataset.filter((pl.col(f'fProbML{particle}') < th) & (pl.col('fPartID') == test_part_id_map[particle])).shape[0]
+                    tns = [test_dataset.filter((pl.col(f'fProbML{particle}') < th) & (pl.col('fPartID') == test_part_id_map[other_particle])).shape[0] for other_particle in other_particles]
+
+
+                    eff = tp / (tp + fn) if (tp + fn) > 0 else -1.
+                    if (tp + fn) < 0:
+                        pur = -1.
+                    else:
+                        den = tp / (tp + fn)
+                        for fp, tn in zip(fps, tns):
+                            if fp + tn > 0:
+                                den = den + fp / (fp + tn) 
+                        if den > 0:
+                            pur = tp / (tp + fn) / den
+                        else:
+                            pur = -1.
+
+                    roc_data_tmp = pl.DataFrame({'particle': pl.Series([particle], dtype=str),
+                                                 'momentum': pl.Series([self.momentum_bins[imomentum]], dtype=pl.Float32),
+                                                 'threshold': pl.Series([th], dtype=pl.Float32),
+                                                 'efficiency': pl.Series([eff], dtype=pl.Float32),
+                                                 'purity': pl.Series([pur], dtype=pl.Float32)})
+
+                    if len(roc_data) == 0:
+                        roc_data = roc_data_tmp
+                    else:
+                        roc_data = pl.concat([roc_data, roc_data_tmp])
+
+                roc_data = roc_data.filter((pl.col('purity') > -0.5) & (pl.col('efficiency') > -0.5))
+                graph_handler = GraphHandler(roc_data)
+                roc = graph_handler.createTGraph('purity', 'efficiency')
+                if roc is not None:
+                    obj_setter(roc, name=f'roc_{self.momentum_bins[imomentum]}_{particle}', title=f'ROC curve for {particle} at {self.momentum_bins[imomentum]} GeV/#it{{c}}; Purity; Efficiency', marker_color=4, marker_style=20)
+                    out_dir.cd()
+                    roc.Write()
+
+                # reset the dataframe
+                roc_data = pl.DataFrame({'particle': pl.Series(values=[], dtype=str),
+                                 'momentum': pl.Series(values=[], dtype=pl.Float32),
+                                 'threshold': pl.Series(values=[], dtype=pl.Float32),
+                                 'efficiency': pl.Series(values=[], dtype=pl.Float32),
+                                 'purity': pl.Series(values=[], dtype=pl.Float32)})

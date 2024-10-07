@@ -8,6 +8,7 @@ import polars as pl
 import yaml
 from tqdm import tqdm
 from ROOT import TFile, TDirectory
+from typing import List
 
 import sys
 sys.path.append('..')
@@ -19,6 +20,12 @@ from framework.utils.terminal_colors import TerminalColors as tc
 from framework.utils.timeit import timeit
 from utils.particles import ParticlePDG
 
+def print_debug_info(data_handler:DataHandler, debug_messages:List[str]):
+    for msg in debug_messages:
+        print(tc.MAGENTA+'[DEBUG]: '+tc.RESET+msg)
+    print(tc.MAGENTA+'[DEBUG]: '+tc.RESET+'particles in data_handler:', data_handler.dataset['fPartID'].unique())
+    print(tc.MAGENTA+'[DEBUG]: '+tc.RESET+'particles in data_handler:', data_handler.id_part_map)
+
 def data_visualization(train_handler:DataHandler, cfg_output:dict, cfg_data:dict, output_file:TDirectory, **kwargs):
 
     # data visualization    
@@ -27,8 +34,10 @@ def data_visualization(train_handler:DataHandler, cfg_output:dict, cfg_data:dict
     is_mc = kwargs.get('is_mc', False)
     out_dirs = {dir: output_file.mkdir(dir) for dir in cfg_output['outDirs']}
     print(type(train_handler.dataset))
+    print(train_handler.dataset['fPartID'].unique())
+    print(train_handler.id_part_map)
     hist_handler = {'all': HistHandler.createInstance(train_handler.dataset)}
-    for ipart, part in enumerate(train_handler.part_list):    
+    for ipart, part in train_handler.id_part_map.items():    
         ds = None
         if is_mc:   ds = train_handler.dataset.filter(np.abs(pl.col('fPartIDMc')) == ParticlePDG[part])
         else:       ds = train_handler.dataset.filter(pl.col('fPartID') == ipart)
@@ -40,6 +49,9 @@ def data_visualization(train_handler:DataHandler, cfg_output:dict, cfg_data:dict
         if key == 'outDirs':                continue
         
         for part in cfg['particle']:
+
+            if part not in hist_handler.keys():
+                continue
 
             if 'TH1' in cfg['type']:
                 
@@ -95,34 +107,36 @@ def data_preparation(input_files:list, output_file:TDirectory, cfg_data_file:str
         data_handler_he = DataHandler(input_files_he, cfg_data_file, rigidity_he=False, **kwargs)
         data_handler_he.correct_for_pid_in_trk()
 
-        data_handler.dataset = data_handler.dataset.filter(pl.col('fPartID') != cfg_data['species'].index('He'))
+        data_handler.drop_particle('He')
+        print('DEBUG:', data_handler.id_part_map)
         print('particles in data_handler:', data_handler.dataset['fPartID'].unique())
         print('particles in data_handler_he:', data_handler_he.dataset['fPartID'].unique())
-        data_handler.dataset = pl.concat([data_handler.dataset, data_handler_he.dataset[data_handler.dataset.columns]])
-        data_handler.part_list = data_handler.part_list + ['He']
+
+        data_handler.merge_datasets(data_handler_he)
+        print('DEBUG:', data_handler.id_part_map)
         print('particles in data_handler:', data_handler.dataset['fPartID'].unique())
+    
+    data_handler.drop_particle('Unidentified')
+    data_handler.drop_particle('El')
 
     species_selection_opt = kwargs.get('species_selection', [False, 'list of species'])
     if species_selection_opt[0]:
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Selecting species:', species_selection_opt[1])
         data_handler.select_species(species_selection_opt[1])
         if kwargs.get('debug', False):
             print('species selection')
-            print('particles in data_handler:', data_handler.dataset['fPartID'].unique())
-            print('particles in data_handler:', data_handler.part_list)
+            
     if kwargs.get('rename_classes', False):
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Renaming classes')
         data_handler.rename_classes()
-        if kwargs.get('debug', False):
-            print('rename classes')
-            print('particles in data_handler:', data_handler.dataset['fPartID'].unique())
-            print('particles in data_handler:', data_handler.part_list)
+        if kwargs.get('debug', False):  print_debug_info(data_handler, ['rename classes'])
 
     if kwargs.get('split', False):
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Splitting the dataset')
         train_handler, test_handler = data_handler.train_test_split(cfg_data['test_size'])
-        if kwargs.get('debug', False):
-            print('split')
-            print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
-            print('particles in train_handler:', train_handler.part_list)
+        if kwargs.get('debug', False):  print_debug_info(train_handler, ['split'])
     elif kwargs.get('test_path', None):
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Loading test dataset')
         test_dict = kwargs
         test_dict['tree_name'] = 'O2clsttableextra'
         test_handler = DataHandler(kwargs['test_path'], cfg_data_file, **kwargs)
@@ -136,63 +150,53 @@ def data_preparation(input_files:list, output_file:TDirectory, cfg_data_file:str
         test_handler = None
 
     if kwargs.get('minimum_hits', None):
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Minimum hits:', kwargs['minimum_hits'])
         train_handler.dataset = train_handler.dataset.filter(pl.col('fNClustersIts') >= kwargs['minimum_hits'])
-        test_handler.dataset = test_handler.dataset.filter(pl.col('fNClustersIts') >= kwargs['minimum_hits'])
-        if kwargs.get('debug', False):
-            print('minimum hits')
-            print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
-            print('particles in train_handler:', train_handler.part_list)
+        if test_handler:    test_handler.dataset = test_handler.dataset.filter(pl.col('fNClustersIts') >= kwargs['minimum_hits'])
+        if kwargs.get('debug', False):  print_debug_info(train_handler, ['minimum hits'])
     
     variable_selection_opt = kwargs.get('variable_selection', [False, 'var', 'min:float', 'max:float'])
     if variable_selection_opt[0]:
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Variable selection:', variable_selection_opt[1], variable_selection_opt[2], variable_selection_opt[3])
         train_handler.dataset = train_handler.dataset.filter(pl.col(variable_selection_opt[1]).is_between(variable_selection_opt[2], variable_selection_opt[3]))
-        test_handler.dataset = test_handler.dataset.filter(pl.col(variable_selection_opt[1]).is_between(variable_selection_opt[2], variable_selection_opt[3]))
-        if kwargs.get('debug', False):
-            print('variable selection')
-            print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
-            print('particles in train_handler:', train_handler.part_list)
+        if test_handler:    test_handler.dataset = test_handler.dataset.filter(pl.col(variable_selection_opt[1]).is_between(variable_selection_opt[2], variable_selection_opt[3]))
+        if kwargs.get('debug', False):  print_debug_info(train_handler, ['variable selection'])
+
     if kwargs.get('clean_protons', False):
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Cleaning protons')
         train_handler.clean_protons()
-        if kwargs.get('debug', False):
-            print('clean protons')
-            print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
-            print('particles in train_handler:', train_handler.part_list)
+        if kwargs.get('debug', False):  print_debug_info(train_handler, ['clean protons'])
+
     data_augmentation_opt = kwargs.get('data_augmentation', [False, 'particles:List[str]', 'min:float', 'max:float', 'n_samples:int'])
     if data_augmentation_opt[0]:
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Data augmentation:', data_augmentation_opt[1], data_augmentation_opt[2], data_augmentation_opt[3], data_augmentation_opt[4])
         for part in data_augmentation_opt[1]:
             train_handler.data_augmentation(part, data_augmentation_opt[2], data_augmentation_opt[3], data_augmentation_opt[4])
-        if kwargs.get('debug', False):
-            print('data augmentation')
-            print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
-            print('particles in train_handler:', train_handler.part_list)
+        if kwargs.get('debug', False):  print_debug_info(train_handler, ['data augmentation'])
     
     variable_oversample_opt = kwargs.get('oversample_momentum', [False, 'var', 'int:nsamples', 'min:float', 'max:float'])
     if variable_oversample_opt[0]:
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Oversample momentum:', variable_oversample_opt[1], variable_oversample_opt[2], variable_oversample_opt[3], variable_oversample_opt[4])
         train_handler.variable_oversample(variable_oversample_opt[1], variable_oversample_opt[2], variable_oversample_opt[3], variable_oversample_opt[4])
-        if kwargs.get('debug', False):
-            print('oversample momentum')
-            print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
-            print('particles in train_handler:', train_handler.part_list)
+        if kwargs.get('debug', False):  print_debug_info(train_handler, ['oversample momentum'])
+    
     if kwargs.get('oversample', False):
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Oversampling')
         train_handler.class_oversample()
-        if kwargs.get('debug', False):
-            print('oversample')
-            print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
-            print('particles in train_handler:', train_handler.part_list)
+        if kwargs.get('debug', False):  print_debug_info(train_handler, ['oversample'])
+    
     n_samples_opt = kwargs.get('n_samples', None)
     if n_samples_opt:   
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Reducing dataset to:', n_samples_opt)
         train_handler.reduced_dataset(n_samples_opt)
-        if kwargs.get('debug', False):
-            print('n samples')
-            print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
-            print('particles in train_handler:', train_handler.part_list)
+        if kwargs.get('debug', False):  print_debug_info(train_handler, ['n samples'])
+    
     flatten_samples_opt = kwargs.get('flatten_samples', ['fPAbs', 250, 0., 2.5, None])
     if flatten_samples_opt[4]:
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Flatten samples:', flatten_samples_opt[0], flatten_samples_opt[1], flatten_samples_opt[2], flatten_samples_opt[3], flatten_samples_opt[4])
         train_handler.variable_and_class_flattening(flatten_samples_opt[0], flatten_samples_opt[1], flatten_samples_opt[2], flatten_samples_opt[3], flatten_samples_opt[4])
-        if kwargs.get('debug', False):
-            print('flatten samples')
-            print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
-            print('particles in train_handler:', train_handler.part_list)
+        if kwargs.get('debug', False):  print_debug_info(train_handler, ['flatten samples'])
+    
     #data_augmentation_opt = kwargs.get('data_augmentation', [False, 'particles:List[str]', 'min:float', 'max:float', 'n_samples:int'])
     #if data_augmentation_opt[0]:
     #    for part in data_augmentation_opt[1]:
@@ -200,12 +204,13 @@ def data_preparation(input_files:list, output_file:TDirectory, cfg_data_file:str
     #    if kwargs.get('debug', False):
     #        print('data augmentation')
     #        print('particles in train_handler:', train_handler.dataset['fPartID'].unique())
-    #        print('particles in train_handler:', train_handler.part_list)
+    #        print('particles in train_handler:', train_handler.id_part_map)
     
     #train_handler.enhance_class('Pi', 2)
 
     #train_handler, validation_handler = train_handler.train_test_split(cfg_data['validation_size'])
     if kwargs.get('validation', True):
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Produce validation set')
         test_handler, validation_handler = test_handler.train_test_split(cfg_data['validation_size'])
     else:
         validation_handler = None
@@ -215,7 +220,8 @@ def data_preparation(input_files:list, output_file:TDirectory, cfg_data_file:str
             print('masses in train_handler:', train_handler.dataset['fMass'].unique())
             print('NORM masses in train_handler:', train_handler.normalized_dataset['fMass'].unique())
     
-    if kwargs.get('normalize', False):   
+    if kwargs.get('normalize', False):  
+        print(tc.GREEN+'[INFO]: '+tc.RESET+'Feature scaling') 
         means, stds = train_handler.auto_normalize()
         validation_handler.normalize(means, stds)
         test_handler.normalize(means, stds)
@@ -225,7 +231,7 @@ def data_preparation(input_files:list, output_file:TDirectory, cfg_data_file:str
             print('masses in train_handler:', train_handler.dataset['fMass'].unique())
             print('NORM masses in train_handler:', train_handler.normalized_dataset['fMass'].unique())
             print('particles in train_handler:', train_handler.normalized_dataset['fPartID'].unique())
-            print('particles in train_handler:', train_handler.part_list)
+            print('particles in train_handler:', train_handler.id_part_map)
     
     if cfg_data['visualize']:
         data_visualization(train_handler, cfg_output, cfg_data, output_file, **kwargs)
@@ -241,7 +247,8 @@ if __name__ == '__main__':
     #input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_slice_pkpi.root']
     input_files_he = ['/data/galucia/its_pid/LHC23_pass4_skimmed/LHC23_pass4_skimmed.root']
     #input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small_pkpi.root']
-    input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root']
+    input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root',
+                   '/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_longK.root']
     #input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small_old2.root']
     cfg_data_file = '../config/config_data.yml'
     cfg_output_file = '../config/config_outputs.yml'
@@ -250,7 +257,7 @@ if __name__ == '__main__':
     #output_dir = '../output/LHC23_pass4_skimmed'
     #output_file = output_dir+'/data_preparation_olddata2.root'
     #output_file = output_dir+'/data_preparation.root'
-    output_file = output_dir+'/data_preparation_he.root'
+    output_file = output_dir+'/data_preparation_minhits7.root'
     #tree_name = 'O2clsttablemcext'
     tree_name = 'O2clsttable'
     #tree_name = 'O2clsttableextra'
@@ -264,6 +271,8 @@ if __name__ == '__main__':
                                                             folder_name=folder_name,
                                                             tree_name=tree_name,
                                                             force_option='AO2D', 
-                                                            validation=False)
+                                                            validation=False,
+                                                            rename_classes=True,
+                                                            minimum_hits=7)
     output_file_root.Close()
 

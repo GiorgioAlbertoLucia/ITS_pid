@@ -35,7 +35,9 @@ class DataHandler(Dataset):
         with open(cfgFile, 'r') as file:
             print(f'Loading configuration file: '+tc.UNDERLINE+tc.BLUE+cfgFile+tc.RESET)
             self.cfg = yaml.safe_load(file)
-        self.part_list = self.cfg['species']
+
+        self.part_id_map = {name: idx for idx, name in enumerate(self.cfg['species'])}
+        self._id_part_map = {idx: name for idx, name in enumerate(self.cfg['species'])}
 
         self.mode = kwargs.get('mode', 'train')
 
@@ -51,8 +53,6 @@ class DataHandler(Dataset):
         self.one_hot_encode = self.cfg['oneHot']
         self.use_classes = self.cfg['useClasses']
         
-
-
     def __len__(self):
         return self.dataset.shape[0]
         
@@ -82,8 +82,12 @@ class DataHandler(Dataset):
     
     @property
     def num_particles(self):
-        return len(self.part_list)
+        return len(self.part_id_map)
     
+    @property
+    def id_part_map(self):
+        return self._id_part_map
+
     @staticmethod
     def rms_cl_size(mean, clsize_layers, n_hit_layers):
         terms = []
@@ -114,11 +118,11 @@ class DataHandler(Dataset):
         self.dataset = self.dataset.with_columns(fClSizeCosL=(pl.col('fMeanItsClSize') * pl.col('fCosL')))
         self.dataset = self.dataset.with_columns(fRMSClSize=(self.rms_cl_size(pl.col('fMeanItsClSize'), [pl.col(f'fItsClusterSizeL{i}') for i in range(6)], pl.col('fNClustersIts'))))
 
-        self.dataset = self.dataset.with_columns(pl.col('fPartID').apply(lambda x: ParticleMasses[self.part_list[x]]).alias('fMass'))
+        self.dataset = self.dataset.with_columns(pl.col('fPartID').apply(lambda partid: ParticleMasses[self._id_part_map[partid]]).alias('fMass'))
 
         # correct momentum for He3 (the value stored is rigidity)
-        if 'He' in self.part_list and rigidity_he:
-            self.dataset = self.dataset.with_columns(pl.when(pl.col('fPartID').eq(self.part_list.index('He'))).then(pl.col('fP') * 2).otherwise(pl.col('fP')).alias('fP'))
+        if 'He' in self._id_part_map.values() and rigidity_he:
+            self.dataset = self.dataset.with_columns(pl.when(pl.col('fPartID').eq(self.part_id_map['He'])).then(pl.col('fP') * 2).otherwise(pl.col('fP')).alias('fP'))
         self.dataset = self.dataset.with_columns(fPAbs=np.abs(pl.col('fP')))
         self.dataset = self.dataset.with_columns(fPt=pl.col('fP') / np.cosh(pl.col('fEta')))
 
@@ -126,13 +130,45 @@ class DataHandler(Dataset):
         self.dataset = self.dataset.with_columns(fBetaAbs=np.abs(pl.col('fBeta')))
         self.dataset = self.dataset.with_columns(fBetaGamma=(pl.col('fBetaAbs') / np.sqrt(1 - pl.col('fBeta')**2)))
 
-    def drop_label_zero(self):
+    def drop_particle(self, particle):
         '''
-            Drop the label 0 from the dataset
+            Drop a given particle from the dataset
         '''
-        self.dataset = self.dataset.filter(pl.col('fPartID') != 0)
-        self.normalized_dataset = self.normalized_dataset.filter(pl.col('fPartID') != 0)
-        self.part_list = self.part_list.remove('Unidentified')
+        if particle in self.part_id_map.keys():
+            print(tc.GREEN+'[INFO]: '+tc.RESET+f'Dropping particle {particle}')
+            self.dataset = self.dataset.filter(pl.col('fPartID') != self.part_id_map[particle])
+            self.normalized_dataset = self.normalized_dataset.filter(pl.col('fPartID') != self.part_id_map[particle])
+        
+            self._id_part_map.pop(self.part_id_map[particle])
+            self.part_id_map.pop(particle)
+        elif particle in self._id_part_map.keys():
+            print(tc.GREEN+'[INFO]: '+tc.RESET+f'Dropping particle {particle}')
+            self.dataset = self.dataset.filter(pl.col('fPartID') != particle)
+            self.normalized_dataset = self.normalized_dataset.filter(pl.col('fPartID') != particle)
+        
+            self.part_id_map.pop(self._id_part_map[particle])
+            self._id_part_map.pop(particle)
+        else:
+            print(tc.MAGENTA+'[WARNING]: '+tc.RESET+f'Particle {particle} not found in the dataset')
+            return
+
+    def merge_datasets(self, datasets:List['DataHandler']):
+        '''
+            Merge datasets
+        '''
+        if type(datasets) is not list:
+            datasets = [datasets]
+        for dataset in datasets:
+            columns = self.dataset.columns
+            self.dataset = pl.concat([self.dataset, dataset.dataset[columns]])
+            self.normalized_dataset = pl.concat([self.normalized_dataset, dataset.normalized_dataset[columns]])
+
+            for idx, particle in dataset._id_part_map.items():
+                if particle not in self._id_part_map.values():
+                    self._id_part_map[len(self._id_part_map)] = particle
+                    self.part_id_map[particle] = len(self.part_id_map)
+        
+        self._new_columns()
 
     def correct_for_pid_in_trk(self):
         '''
@@ -167,7 +203,7 @@ class DataHandler(Dataset):
         '''
         print(tc.UNDERLINE+tc.BLUE+'Cleaning protons'+tc.RESET)
         
-        ds_protons = self.dataset.filter(pl.col('fPartID') == self.part_list.index('Pr'))
+        ds_protons = self.dataset.filter(pl.col('fPartID') == self.part_id_map['Pr'])
         BB_params = {
             'kp1': -0.031712,
             'kp2': -45.0275,
@@ -191,7 +227,7 @@ class DataHandler(Dataset):
         ds_protons = ds_protons.with_columns(fSigmaClSizeCosLPr=(pl.col('fExpClSizeCosLPr')*(sigma_params['kp0'] + sigma_params['kp1'] * pl.col('fExpClSizeCosLPr'))))
         ds_protons = ds_protons.with_columns(fNSigmaPr=((pl.col('fClSizeCosL') - pl.col('fExpClSizeCosLPr')) / pl.col('fSigmaClSizeCosLPr')))
         ds_protons = ds_protons.filter(pl.col('fNSigmaPr').abs() < 2)
-        self.dataset = pl.concat([self.dataset.filter(pl.col('fPartID') != self.part_list.index('Pr')), ds_protons[self.dataset.columns]])
+        self.dataset = pl.concat([self.dataset.filter(pl.col('fPartID') != self.part_id_map['Pr']), ds_protons[self.dataset.columns]])
 
     def auto_normalize(self)-> Tuple[np.ndarray, np.ndarray]:
         '''
@@ -231,7 +267,7 @@ class DataHandler(Dataset):
         '''
         
         weights = np.zeros(self.num_particles)
-        for ipart, part in enumerate(self.part_list):
+        for ipart, part in self._id_part_map.items():
             weights[ipart] = len(self.dataset.filter(pl.col('fPartID') == ipart)) / len(self.dataset)
         
         return weights
@@ -243,7 +279,7 @@ class DataHandler(Dataset):
         '''
         
         counts = np.zeros(self.num_particles)
-        for ipart, part in enumerate(self.part_list):
+        for ipart, part in self._id_part_map.items():
             counts[ipart] = len(self.dataset.filter(pl.col('fPartID') == ipart))
         
         return counts
@@ -262,10 +298,13 @@ class DataHandler(Dataset):
         test_dataset, train_dataset = self.dataset.head(test_size), self.dataset.tail(-test_size)
 
         train_handler = DataHandler(train_dataset, self.cfg_file, mode='train')
-        train_handler.part_list = self.part_list
+        train_handler.part_id_map = self.part_id_map
+        train_handler._id_part_map = self._id_part_map
         train_handler._new_columns()
+
         test_handler = DataHandler(test_dataset, self.cfg_file, mode='test')
-        test_handler.part_list = self.part_list
+        test_handler.part_id_map = self.part_id_map
+        test_handler._id_part_map = self._id_part_map
         test_handler._new_columns()
         
         return train_handler, test_handler
@@ -294,7 +333,7 @@ class DataHandler(Dataset):
             factor (float): enhancement factor
         '''
         
-        part_id = self.part_list.index(particle)
+        part_id = self.part_id_map[particle]
         part_count = len(self.dataset.filter(pl.col('fPartID') == part_id))
         n_new_samples = int(factor * part_count)
         filtered_ds = self.dataset.filter(pl.col('fPartID') == part_id)
@@ -317,7 +356,7 @@ class DataHandler(Dataset):
         if var_min is None: var_min = self.dataset[variable].min()
         if var_max is None: var_max = self.dataset[variable].max()
         bin_width = (var_max - var_min) / n_bins
-        for ipart, part in enumerate(self.part_list):
+        for ipart, part in self._id_part_map.items():
             ds_part = self.dataset.filter(pl.col('fPartID') == ipart)
             if len(ds_part) == 0: 
                 continue
@@ -349,7 +388,7 @@ class DataHandler(Dataset):
         if var_min is None: var_min = self.dataset[variable].min()
         if var_max is None: var_max = self.dataset[variable].max()
         bin_width = (var_max - var_min) / n_bins
-        for ipart, part in enumerate(self.part_list):
+        for ipart, part in self._id_part_map.items():
             ds_part = self.dataset.filter(pl.col('fPartID') == ipart)
             if len(ds_part) == 0: 
                 continue
@@ -371,7 +410,7 @@ class DataHandler(Dataset):
             particle (str): particle
         '''
         
-        part_id = self.part_list.index(particle)
+        part_id = self.part_id_map[particle]
         ds_for_augmentation = self.dataset.filter(pl.col('fPartID') != part_id)
         ds_for_augmentation = ds_for_augmentation.filter(pl.col('fBetaAbs').is_between(beta_min, beta_max))
         if len(ds_for_augmentation) == 0: 
@@ -404,10 +443,12 @@ class DataHandler(Dataset):
             species (str): species
         '''
         
-        species_index = [self.part_list.index(sp) for sp in species]
-        self.dataset = self.dataset.filter(pl.col('fPartID').is_in(species_index))
-        self.normalized_dataset = self.normalized_dataset.filter(pl.col('fPartID').is_in(species_index))
-        self.part_list = species
+        species_indices = [self.part_id_map[sp] for sp in species]
+        self.dataset = self.dataset.filter(pl.col('fPartID').is_in(species_indices))
+        self.normalized_dataset = self.normalized_dataset.filter(pl.col('fPartID').is_in(species_indices))
+        
+        self.part_id_map = {self._id_part_map[idx]: idx for idx in species_indices}
+        self._id_part_map = {value: key for key, value in self.part_id_map.items()}
 
     def rename_classes(self):
         '''
@@ -415,7 +456,22 @@ class DataHandler(Dataset):
         '''
 
         available_classes = self.dataset['fPartID'].unique()
-        for iclass, class_id in enumerate(available_classes):
-            print(f'Class {self.part_list[iclass]}: {class_id} -> {iclass}')
-            self.dataset = self.dataset.with_columns(pl.when(pl.col('fPartID').eq(class_id)).then(iclass).otherwise(pl.col('fPartID')).alias('fPartID'))
-            self.normalized_dataset = self.normalized_dataset.with_columns(pl.when(pl.col('fPartID').eq(class_id)).then(iclass).otherwise(pl.col('fPartID')).alias('fPartID'))
+        new_label_map = {old_id: new_id for new_id, old_id in enumerate(available_classes)}
+
+        for old_id, new_id in new_label_map.items():
+            particle_name = self._id_part_map.get(old_id, 'Unknown')
+            print(f'Particle {particle_name}: {old_id} -> {new_id}')
+
+            self.dataset = self.dataset.with_columns(pl.when(pl.col('fPartID').eq(old_id)).then(new_id).otherwise(pl.col('fPartID')).alias('fPartID'))
+            self.normalized_dataset = self.normalized_dataset.with_columns(pl.when(pl.col('fPartID').eq(old_id)).then(new_id).otherwise(pl.col('fPartID')).alias('fPartID'))
+        
+        self.part_id_map = {self._id_part_map[old_id]: new_id for old_id, new_id in new_label_map.items()}
+        self._id_part_map = {value: key for key, value in self.part_id_map.items()}
+    
+    def update_map(self):
+        '''
+            Update the particle label map based on the dataset
+        '''
+
+        self.part_id_map = {name: idx for idx, name in enumerate(self.dataset['fPartID'].unique())}
+        self._id_part_map = {idx: name for idx, name in enumerate(self.dataset['fPartID'].unique())}

@@ -1,3 +1,14 @@
+mode: 'regressor' # 'classifier' or 'regressor'
+debug: False
+
+input_files: ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root', 
+              '/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_longK.root']
+input_files_he: ['/data/galucia/its_pid/LHC23_pass4_skimmed/LHC23_pass4_skimmed.root']
+input_files_pkpi: ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_slice_pkpi.root']
+output_file: '/home/galucia/ITS_pid/output/bdt_beta_he.parquet'
+cfg_bdt_file: '/home/galucia/ITS_pid/config/config_bdt_reg.yml' # path to this file
+
+
 all_species: ['Unidentified', 'El', 'Pi', 'Ka', 'Pr', 'De', 'He']
 train_species: ['Pi', 'Ka', 'Pr', 'De', 'He']
 features: [ 'fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fItsClusterSizeL3', 'fItsClusterSizeL4', 'fItsClusterSizeL5', 'fItsClusterSizeL6', 
@@ -5,6 +16,11 @@ features: [ 'fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fIts
             'fMeanItsClSize', 'fClSizeCosL'
             ]
 target: 'fBetaAbs'
+
+train: True
+minimum_ITS_hits: 7
+momentum_bins: [0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95, 1.05] # for plotting and ensemble
+
 
 load_from_optuna: True
 optuna_hyperparameters_path: '/home/galucia/ITS_pid/models/bdt_beta_he_optuna.pkl'

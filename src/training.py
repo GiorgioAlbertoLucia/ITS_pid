@@ -109,29 +109,32 @@ if __name__ == '__main__':
     from data_preparation import data_preparation
 
     #input_files = ['../../data/0720/its_PIDStudy.root']
-    input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root']
+    input_files = ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root', 
+                   '/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_longK.root']
     cfg_data_file = '../config/config_data.yml'
     cfg_output_file = '../config/config_outputs.yml'
     output_file = '../output/data_preparation.root'
 
     output_file_root = TFile(output_file, 'RECREATE')
-    outdir = output_file_root.mkdir('n_output')
+    outdir = output_file_root.mkdir('nn_output')
 
     #train_handler, test_handler = data_preparation(input_files, output_file, cfg_data_file, cfg_output_file, normalize=True, oversample_momentum=True, oversample=True, force_option='AO2D')
     train_species = ['Pi', 'Ka', 'Pr']
     #train_handler, test_handler = data_preparation(input_files, output_file, cfg_data_file, cfg_output_file, normalize=True, force_option='AO2D', split=True, species_selection=[True, train_species], variable_selection=[True, 'fPAbs', 0., 1.0], oversample_momentum=True, n_samples=int(1e7), oversample=True)
-    train_handler, validation_handler, test_handler = data_preparation(input_files, output_file_root, cfg_data_file, cfg_output_file, force_option='AO2D', 
+    train_handler, validation_handler, test_handler = data_preparation(input_files, output_file_root, cfg_data_file, cfg_output_file, 
+                                                   force_option='AO2D', 
                                                    normalize=True, 
                                                    rename_classes=True, 
                                                    split=True, 
                                                    species_selection=[True, train_species], 
-                                                   variable_selection=[True, 'fPAbs', 0., 1.0], 
-                                                   flatten_samples=['fPAbs', 250, 0., 2.5, 500], 
+                                                   variable_selection=[True, 'fPAbs', 0.35, 1.05],
+                                                   flatten_samples=['fPAbs', 70, 0.35, 1.05, 2000], 
                                                    clean_protons=True, 
-                                                   oversample_momentum=[True, 'fPAbs', 500, 0., 5.], 
+                                                   #oversample_momentum=[True, 'fPAbs', 500, 0., 5.], 
                                                    n_samples=None, 
-                                                   oversample=False)
-    train_handler, validation_handler = train_handler.train_test_split(0.05)
+                                                   oversample=False,
+                                                   minimum_hits=7
+                                                   )
     #test_handler = copy.deepcopy(train_handler)
 
     train_model(train_handler, validation_handler, cfg_data_file)

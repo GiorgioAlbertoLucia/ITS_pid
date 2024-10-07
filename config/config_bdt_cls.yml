@@ -1,3 +1,13 @@
+mode: 'classifier_ensemble' # 'classifier' or 'classifier_ensemble'
+debug: False
+
+input_files: ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_small.root', 
+              '/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_longK.root']
+input_files_he: ['/data/galucia/its_pid/LHC23_pass4_skimmed/LHC23_pass4_skimmed.root']
+input_files_pkpi: ['/data/galucia/its_pid/pass7/LHC22o_pass7_minBias_slice_pkpi.root']
+output_file: '/home/galucia/ITS_pid/output/BDT/bdt'
+cfg_bdt_file: '/home/galucia/ITS_pid/config/config_bdt_cls.yml' # path to this file
+
 all_species: ['Unidentified', 'El', 'Pi', 'Ka', 'Pr', 'De', 'He']
 train_species: ['Pi', 'Ka', 'Pr'] #, 'De', 'He']
 features: [ 'fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fItsClusterSizeL3', 'fItsClusterSizeL4', 
@@ -5,6 +15,10 @@ features: [ 'fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fIts
             'fEta', 'fPhi', 'fCosL', 
             'fPAbs', 'fMeanItsClSize', 'fClSizeCosL']
 target: 'fPartID'
+
+train: False
+minimum_ITS_hits: 7
+momentum_bins: [0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95, 1.05] # for plotting and ensemble
 
 load_from_optuna: False
 optuna_hyperparameters_path: '/home/galucia/ITS_pid/models/bdt_cls_optuna.pkl'
@@ -37,8 +51,8 @@ model_path: '/home/galucia/ITS_pid/models/bdt_cls.pkl'
 
 #model_path: '/home/galucia/ITS_pid/models/bdt_cls_ensemble.pkl'
 #model_path: '/home/galucia/ITS_pid/models/bdt_cls_ensemble_7hits.pkl'
-output_file_train: '/home/galucia/ITS_pid/output/bdt_cls_ensemble_train_7hits.parquet'
-output_file_test: '/home/galucia/ITS_pid/output/bdt_cls_ensemble_test_7hits.parquet'
+output_file_train: '/home/galucia/ITS_pid/output/BDT/bdt_cls_ensemble_train_7hits.parquet'
+output_file_test: '/home/galucia/ITS_pid/output/BDT/bdt_cls_ensemble_test_7hits.parquet'
 
 # plots
 betaml_plot: {

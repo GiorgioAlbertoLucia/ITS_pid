@@ -3,7 +3,7 @@
 #
 
 # enabling configuration
-visualize: True
+visualize: False
 
 # Particle species
 species: ['Unidentified', 'El',
@@ -26,7 +26,7 @@ cuts:     { nClusTPCmin: 80,
           }
 
 nn_mode: 'classification' # 'classification' or 'regression'
-features: ['fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fItsClusterSizeL3', 'fItsClusterSizeL4', 'fItsClusterSizeL5', 'fItsClusterSizeL6', 'fEta', 'fPhi', 'fCosL', 'fP', 'fMeanItsClSize', 'fClSizeCosL']
+features: ['fItsClusterSizeL5', 'fItsClusterSizeL6', 'fEta', 'fPhi', 'fCosL', 'fP', 'fMeanItsClSize', 'fClSizeCosL']
 #features: ['fItsClusterSizeL0', 'fItsClusterSizeL1', 'fItsClusterSizeL2', 'fItsClusterSizeL3', 'fItsClusterSizeL4', 'fItsClusterSizeL5', 'fItsClusterSizeL6', 'fEta', 'fPhi', 'fCosL', 'fP']
 target: 'fPartID'
 oneHot: False
@@ -34,10 +34,10 @@ useClasses: True
 oversample: True
 
 num_threads: 1
-num_epochs: 50
+num_epochs: 30
 learning_rate: 0.01
 batch_size: 32
-test_size: 0.3
+test_size: 0.5
 validation_size: 0.5
 
 # data preparation 
